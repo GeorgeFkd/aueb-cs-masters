@@ -17,6 +17,8 @@ class AllStrategiesParams:
     strategy="" #epsilon-greedy, upper-confidence-bound, soft-max-preference
     value_estimate_update_rule="" # "mean","exponential_decay"
     epsilon=0 # epsilon param for the epsilon greedy strategies
+    optimistic=False # use optimistic initial values or not
+    initial_value = 0
     c=0 #for upper confidence bound strategy
     alpha=0 # params used in updating the reward estimate
 
@@ -39,6 +41,9 @@ def calc_softmax_for(preferences):
 def run_n_armed_bandit(exec_params:EnvParams,strategy_params:AllStrategiesParams,n=10):
     #if optimistic initial values, this should probably change
     Qt = np.zeros(exec_params.amount_of_avail_actions)
+    if strategy_params.optimistic:
+        Qt.fill(strategy_params.initial_value)
+
     Nt = np.zeros(exec_params.amount_of_avail_actions)
     preferences = np.zeros(exec_params.amount_of_avail_actions)
     average_reward = 0
@@ -61,11 +66,11 @@ def run_n_armed_bandit(exec_params:EnvParams,strategy_params:AllStrategiesParams
                 #choose greedily
                 action_chosen = np.argmax(Qt)
         elif strategy_params.strategy.lower() == "ucb" or strategy_params.strategy.lower() == "upper-confidence-bound":
-            # confidence_vals = [strategy_params.c * sqrt(log(step+1) / (action_usage_times + 0.0000001)) for action_usage_times in Nt]
-            confidence_vals = [
-                strategy_params.c * np.sqrt(np.log(step + 1) / Nt[a]) if Nt[a] > 0 else float('inf')
-                for a in range(exec_params.amount_of_avail_actions)
-            ]
+            confidence_vals = [strategy_params.c * sqrt(log(step+1) / (action_usage_times + 0.000001)) for action_usage_times in Nt]
+            # confidence_vals = [
+            #     strategy_params.c * np.sqrt(np.log(step + 1) / Nt[a]) if Nt[a] > 0 else float('inf')
+            #     for a in range(exec_params.amount_of_avail_actions)
+            # ]
             action_chosen = np.argmax(Qt + confidence_vals)
         elif strategy_params.strategy == "soft-max-preference" or "softmax" in strategy_params.strategy or "gradient" in strategy_params.strategy:
             p_t_a = calc_softmax_for(preferences)
@@ -79,16 +84,11 @@ def run_n_armed_bandit(exec_params:EnvParams,strategy_params:AllStrategiesParams
         Nt[action_chosen] = Nt[action_chosen] + 1
         reward = random_vals[action_chosen]
         noisy_reward = reward + np.random.normal(0,1)
-        if strategy_params.strategy == "epsilon-greedy":
-            Qt[action_chosen] = Qt[action_chosen] + (1/Nt[action_chosen]) * (noisy_reward - Qt[action_chosen])
+        Qt[action_chosen] = Qt[action_chosen] + (1/Nt[action_chosen]) * (noisy_reward - Qt[action_chosen])
         if strategy_params.strategy == "soft-max-preference" or "softmax" in strategy_params.strategy or "gradient" in strategy_params.strategy:
             preferences = preferences - strategy_params.alpha * (noisy_reward - average_reward) * p_t_a
             preferences[action_chosen] = preferences[action_chosen] + strategy_params.alpha * (noisy_reward - average_reward) * (1-p_t_a[action_chosen])
-        # Gradient Bandit ( i did not get it right most likely )
-        #preferences = preferences - [strategy_params.alpha * (noisy_reward - average_reward) * prob for prob in p_t_a ]
-        # changed p_t_a to 1-p_t_a let's see
-        #preferences[action_chosen] = preferences[action_chosen] + strategy_params.alpha * (noisy_reward - average_reward) * (1-p_t_a[action_chosen])
-        # calculate statistics
+
         # this might be wrong, instead of noisy reward it might be the reward
         average_reward = average_reward + (1/(step+1)) * (noisy_reward - average_reward)
         avg_reward_per_step.append(average_reward)
@@ -131,14 +131,6 @@ def eval_epsilon_greedy(epsilon):
     np.random.seed(exec_params.seed)
     x_vals_avg,y_vals_avg,x_vals_optimal,y_vals_optimal = eval_strategy_in_bandit_task(exec_params, strategy_params)
     print(f"After a thousand steps epsilon-greedy, with ε={epsilon} it converges to: {y_vals_avg[len(y_vals_avg)-1]}")
-    # plt.figure(figsize=(8, 6))
-    # plt.plot(x_vals_avg, y_vals_avg, linestyle='-', color='b')
-    # plt.plot(x_vals_optimal, y_vals_optimal, linestyle='-', color='r')
-    # plt.title(f"10-armed bandits-epsilon-greedy(ε={epsilon})")
-    # plt.yticks([0,0.5,1,1.5] + [y_vals_avg[len(y_vals_avg)-1]])
-    # plt.xlabel("Steps")
-    # plt.ylabel("Average Reward")
-    # plt.show()
     return y_vals_avg
 
 def eval_ucb_strategy(c):
@@ -151,20 +143,6 @@ def eval_ucb_strategy(c):
     np.random.seed(exec_params.seed)
     x_vals_avg,y_vals_avg,x_vals_optimal,y_vals_optimal = eval_strategy_in_bandit_task(exec_params, strategy_params)
     print(f"After a thousand steps of ucb, with c={c} it converges to: {y_vals_avg[len(y_vals_avg)-1]}")
-    # # plt.figure(figsize=(8, 6))
-    # fig,(ax1,ax2) = plt.subplots(2,figsize=(8,6))
-    # fig.suptitle("Multi Armed Bandits Strategies UCB")
-    # ax1.plot(x_vals_avg, y_vals_avg, linestyle='-', color='b')
-    # # ax1.set_title(f"10-armed bandits UCB(c={c})")
-    # ax1.set_yticks([0,0.5,1,1.5] + [y_vals_avg[len(y_vals_avg)-1]])
-    # ax1.set_xlabel("Steps")
-    # ax1.set_ylabel("Average Reward")
-    #
-    # ax2.plot(x_vals_optimal, y_vals_optimal, linestyle='-', color='r')
-    # # ax2.set_title(f"10-armed bandits UCB(c={c})")
-    # ax2.set_xlabel("Steps")
-    # ax2.set_ylabel("Optimal %")
-    # plt.show()
     return y_vals_avg
 
 def eval_gradient_strategy(alpha):
@@ -176,27 +154,33 @@ def eval_gradient_strategy(alpha):
     np.random.seed(exec_params.seed)
     x_vals_avg,y_vals_avg,x_vals_optimal,y_vals_optimal = eval_strategy_in_bandit_task(exec_params, strategy_params)
     print(f"After a thousand steps of Gradient Bandit, with α={alpha} it converges to: {y_vals_avg[len(y_vals_avg)-1]}")
-    # plt.figure(figsize=(8, 6))
-    # plt.subplot(nrows=4,ncols=3)
-    # plt.title(f"10-armed bandits Gradient(α={alpha})")
-    # plt.yticks([0,0.5,1,1.5] + [y_vals_avg[len(y_vals_avg)-1]])
-    # plt.xlabel("Steps")
-    # plt.ylabel("Average Reward")
-    # plt.plot(x_vals_avg, y_vals_avg, linestyle='-', color='b')
-    # plt.subplot(nrows=4,ncols=3)
-    # plt.plot(x_vals_optimal, y_vals_optimal, linestyle='-', color='b')
-    # plt.title(f"10-armed bandits Gradient(α={alpha})")
-    # plt.yticks([0,0.5,1,1.5] + [y_vals_avg[len(y_vals_avg)-1]])
-    # plt.xlabel("Steps")
-    # plt.ylabel("Optimal %")
-    # plt.show()
     return y_vals_avg
 
+def eval_optimistic_greedy(initial_value):
+    strategy_params = AllStrategiesParams()
+    strategy_params.strategy = "epsilon-greedy"
+    strategy_params.epsilon = 0.1
+    strategy_params.initial_value = initial_value
+    strategy_params.optimistic = True
+
+    exec_params = create_default_env()
+    np.random.seed(exec_params.seed)
+    x_vals_avg,y_vals_avg,x_vals_optimal,y_vals_optimal = eval_strategy_in_bandit_task(exec_params, strategy_params)
+    print(f"After a thousand steps epsilon-greedy with optimistic initial values, with ε={0.1} it converges to: {y_vals_avg[len(y_vals_avg)-1]}")
+    return y_vals_avg
+
+def eval_optimistic_greedy_for_vals(vals_arr):
+    x_axis = []
+    y_axis = []
+    for initial_value in vals_arr:
+        result = eval_optimistic_greedy(initial_value)
+        #just grab the value it converged to
+        result = result[-1]
+        x_axis.append(initial_value)
+        y_axis.append(result)
+    return x_axis,y_axis
 
 
-
-# to do figure 2.5, we need for x->log(tuned parameter vals)
-# y-> average reward.
 def eval_ucb_for_vals(vals_arr):
     x_axis = []
     y_axis = []
@@ -237,30 +221,29 @@ def display_stats_of_all_strategies(args):
     # Loop through the strategies and plot each one
     for results in args:
         ax.plot(results[0], results[1], label=results[2], color=results[3])
-
-    # Set titles and labels
     ax.set_title('Average reward over first 1000 steps', fontsize=12, loc='left', pad=20)
     ax.set_xlabel('$\\alpha \\ / \\ c \\ / \\ Q_0$', fontsize=14)
     ax.set_ylabel('Average reward', fontsize=12)
-
-    # Customize ticks
-    ax.set_xscale('log')  # Set the x-axis to a logarithmic scale
+    ax.set_xscale('log')
     ax.set_xticks([1/128, 1/64, 1/32, 1/16, 1/8, 1/4, 1/2, 1, 2, 4])
-    ax.get_xaxis().set_major_formatter(plt.ScalarFormatter())  # Use standard formatting for log scale
-
-    # Add legend
+    ax.get_xaxis().set_major_formatter(plt.ScalarFormatter())
     ax.legend(loc='upper left', fontsize=10)
-
-    # Display the plot
-    # plt.tight_layout()
     plt.show()
 
 
 
 #with these vals i should get sth similar
-# x_ucb,y_ucb = eval_ucb_for_vals([0.1,0.25,0.5,1,1.25,1.5,2.0,2.5,3])
-# x_gradient,y_gradient = eval_gradient_for_vals([0.01,0.05,0.1,0.2,0.5,1,2])
-# x_greedy,y_greedy = eval_greedy_for_vals([0,0.01,0.05,0.1,0.2,0.3])
-#todo impl optimistic initial values for greedy
-#display_stats_of_all_strategies([(x_ucb,y_ucb,"UCB","blue"),(x_gradient,y_gradient,"gradient bandit","green"),(x_greedy,y_greedy,"epsilon-greedy","red")])
+x_ucb,y_ucb = eval_ucb_for_vals([0.1,0.25,0.5,1,1.25,1.5,2.0,2.5,3])
+x_gradient,y_gradient = eval_gradient_for_vals([0.01,0.05,0.1,0.2,0.5,1,2])
+x_greedy,y_greedy = eval_greedy_for_vals([0,0.01,0.05,0.1,0.2,0.3])
+x_greedy_optimistic,y_greedy_optimistic = eval_optimistic_greedy_for_vals([0.5,0.75,1,1.5,2,2.5,3])
+
+
+# display_stats_of_all_strategies([(x_greedy_optimistic,y_greedy_optimistic,"greedy with optimistic initialization α=0.1","black")])
+display_stats_of_all_strategies([
+    (x_ucb,y_ucb,"UCB","blue"),
+    (x_gradient,y_gradient,"gradient bandit","green"),
+    (x_greedy,y_greedy,"epsilon-greedy","red"),
+    (x_greedy_optimistic,y_greedy_optimistic,"greedy with optimistic initialisation ε=0.1","black")
+])
 
