@@ -48,6 +48,7 @@ std::pair<double,std::chrono::duration<double>> normal_avg(int elems) {
     // auto start = std::chrono::high_resolution_clock::now();
 
     //using arr instead of vector speeds it up a lot.
+    //TODO, implement it with a vector and a .reserve() call.
     auto const start = std::chrono::high_resolution_clock::now();
     auto* rewardsOfAction = new double[elems];
     // rewardsOfAction.reserve(elems);

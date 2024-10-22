@@ -5,6 +5,8 @@ set(CMAKE_CXX_STANDARD 26)
 find_package(Boost)
 add_executable(nlp_hw1_q2
         levenshtein_distance.cpp)
+
+#set(CMAKE_CXX_FLAGS "-O3 -Wall -Wextra")
 add_executable(mergesort merge_sort.cpp)
 add_executable(avg_perf incremental_vs_simple_avg_perf_assessment.cpp)
 add_custom_target(rl-greedy ALL
