@@ -1,8 +1,6 @@
 //
 // Created by georgefkd on 14/10/2024.
 //
-
-
 #include <iostream>
 #include <vector>
 void mergearr(std::vector<int>& arr,int start,int mid,int end) {
