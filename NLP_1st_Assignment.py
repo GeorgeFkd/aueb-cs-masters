@@ -256,12 +256,11 @@ class AutoCorrector:
     _sentences_to_evaluate_on = 5
     _mistake_probability = 0.25
 
-
-    _beam_search_max_depth = 7
+    _beam_search_max_depth = 10
     _beam_search_beam_width = 4
     _beam_search_candidates_amount = 10
     _beam_search_use_bigram = False
-    _beam_search_weights_for_prob = (0.25,0.75)
+    _beam_search_weights_for_prob = (0.65, 0.35)
 
 
     _sentences = []
