@@ -2,7 +2,7 @@ import numpy as np
 from scipy.linalg import solve
 import logging
 logging.basicConfig()
-logging.getLogger().setLevel(logging.INFO)
+logging.getLogger().setLevel(logging.DEBUG)
 
 # Example 3.8: Gridworld Figure 3.5a uses a rectangular grid to illustrate
 # value functions for a simple finite MDP. The cells of the grid correspond to
@@ -119,7 +119,7 @@ class GridWorldSolver:
     def get_equation_terms_of_direction(self, g:GridPoint, direction:str, pr_result):
         result_next, result_punish = self._grid.next_state_from_with_step(g, direction)
         current_reward =  self._params.punishment if result_punish else self._grid.reward_of_position(g)
-        current_b = pr_result * current_reward
+        current_b = pr_result * current_reward #* self._params.gamma
         current_a = pr_result * self._params.gamma
         return current_b, current_a, (result_next.x, result_next.y)
 
@@ -139,7 +139,7 @@ class GridWorldSolver:
         nx,ny = self._params.grid_width,self._params.grid_height
         b = np.zeros(nx*ny,dtype=float)
         a = np.zeros((nx*ny,nx*ny),dtype=float)
-        print("\t\t\t\tNorth\t\t\t\tEast\t\t\t\tSouth\t\t\t\tWest")
+        # print("\t\t\t\tNorth\t\t\t\tEast\t\t\t\tSouth\t\t\t\tWest")
         for x in range(nx):
             for y in range(ny):
                 current_point = GridPoint(x,y)
@@ -151,28 +151,42 @@ class GridWorldSolver:
 
                 # x12 = x[1+2*5] = x[11] in a x[25] array
                 b[equation_index] = b_north + b_east + b_west + b_south
-                a[equation_index,a_north_pos[0] + a_north_pos[1] * nx] = a_north
-                a[equation_index,a_east_pos[0] + a_east_pos[1] * nx] = a_east
-                a[equation_index,a_south_pos[0] + a_south_pos[1] * nx] = a_south
-                a[equation_index,a_west_pos[0] + a_west_pos[1] * nx] = a_west
+                a[equation_index,a_north_pos[0] + a_north_pos[1] * nx] += a_north
+                a[equation_index,a_east_pos[0] + a_east_pos[1] * nx] += a_east
+                a[equation_index,a_south_pos[0] + a_south_pos[1] * nx] += a_south
+                a[equation_index,a_west_pos[0] + a_west_pos[1] * nx] += a_west
 
                 #for visuals
-                logging.debug(str(current_point) + f"={self.get_current_equation_str(current_point,Direction.NORTH,pr_north)} + "
-                                           f"{self.get_current_equation_str(current_point,Direction.EAST,pr_east)} + "
-                                           f"{self.get_current_equation_str(current_point,Direction.SOUTH,pr_south)} + "
-                                           f"{self.get_current_equation_str(current_point,Direction.WEST,pr_west)}"
-                      )
-        print("b=",b.reshape((5,5)))
+                # print(str(current_point) + f"={self.get_current_equation_str(current_point,Direction.NORTH,pr_north)} + "
+                #                            f"{self.get_current_equation_str(current_point,Direction.EAST,pr_east)} + "
+                #                            f"{self.get_current_equation_str(current_point,Direction.SOUTH,pr_south)} + "
+                #                            f"{self.get_current_equation_str(current_point,Direction.WEST,pr_west)}"
+                #       )
+
         return a,b
 grid_solver = GridWorldSolver(EnvParams())
 A,B = grid_solver.write_equations()
+print("b=",B.reshape((5,5)))
 I = np.eye(25)
-print("A=",A)
+# print("A=",A)
 v = np.linalg.solve(I-A,B)
-vreshaped = v.reshape(5,5)
+vreshaped = np.round(v.reshape(5,5),1)
 print("Value function (v):")
 print(vreshaped)
-print("Βγαίνουν περίπου σωστά αλλά πρέπει να έχω θέμα με την στρογγυλοποίηση")
+
+# correct_result = np.array([
+#     [3.3, 8.8, 4.4, 5.3, 1.5],
+#     [1.5, 3.0, 2.3, 1.9, 0.5],
+#     [0.1, 0.7, 0.7, 0.4, -0.4],
+#     [-1.0, -0.4, -0.4, -0.6, -1.2],
+#     [-1.9, -1.3, -1.2, -1.4, -2.0]
+# ])
+#
+# deviation = vreshaped - correct_result
+# print("Per element Distance from textbook result",deviation)
+
+
+
 
 
 
