@@ -6,11 +6,10 @@ from typing import Tuple,List
 import matplotlib.pyplot as plt
 from collections import defaultdict
 
-np.random.seed(1234)
-class BlackjackRules:
 
-    # this probably should be up to the player and dealer
-    # bcs if he has aces he can use those
+class BlackjackRules:
+    # up to the player and dealer
+    # if they have aces they can use those
     @staticmethod
     def hand_went_bust(hand):
         if Deck.evaluate_hand(hand) > 21:
@@ -66,8 +65,8 @@ class Deck:
     @staticmethod
     def deal_two_cards_each_with_unusable_ace():
         # '1' is the unusable ace
-        return ([np.random.choice(Deck.cards + ['1']), np.random.choice(Deck.cards + ['1'])],
-                [np.random.choice(Deck.cards), np.random.choice(Deck.cards)])
+        return ([np.random.choice(Deck.cards), np.random.choice(Deck.cards)],
+                [np.random.choice(Deck.cards), np.random.choice(Deck.cards)] )
 
     @staticmethod
     def deal_card():
@@ -77,7 +76,7 @@ class Deck:
         player_has_ace = Deck.has_usable_ace(player_hand)
         player_value = Deck.evaluate_hand(player_hand)
         # We can only see one dealer card
-        visible_dealer_value = Deck.evaluate_hand(dealer_hand[0:1])
+        visible_dealer_value = Deck.evaluate_hand([dealer_hand[0]])
         # we might need the dealer's hand too dunno
         return [(player_value,visible_dealer_value,player_has_ace,dealer_hand)]
     @staticmethod
@@ -85,16 +84,14 @@ class Deck:
         player_has_ace = Deck.has_usable_ace(player_hand)
         player_value = Deck.evaluate_hand(player_hand)
         # We can only see one dealer card
-        visible_dealer_value = Deck.evaluate_hand(dealer_hand[0:1])
+        visible_dealer_value = Deck.evaluate_hand([dealer_hand[0]])
         # S,A
-        return player_value, visible_dealer_value, player_has_ace, dealer_hand,action
+        # should it be the whole dealer hand or not?
+        return player_value, visible_dealer_value, player_has_ace, [dealer_hand[0]],action
 
-# i need it to also return a List[(pl_value,dl_value,has_usable_ace)] object
-# just basically change all returns to reward,(pl_value,dl_value,has_usable_ace)
-# Game Loop
+
+# Game Loop(Only used in Monte Carlo Prediction)
 def play_game(policy,player_hand,dealer_hand,player_sticks,dealer_sticks,states_in_game):
-    #
-    # player_hand,dealer_hand = Deck.deal_two_cards_each()
     print("BlackjackRules Turn:")
     print("Player Hand: ",player_hand)
     print("Dealer Hand: ",dealer_hand)
@@ -158,93 +155,21 @@ def play_game(policy,player_hand,dealer_hand,player_sticks,dealer_sticks,states_
         else:
             return play_game(policy, player_hand, dealer_hand, True, dealer_sticks,states_in_game)
 
-def play_game_for_MCC(policy,player_hand,dealer_hand,player_sticks,dealer_sticks,states_in_game):
-    #
-    # player_hand,dealer_hand = Deck.deal_two_cards_each()
-    # print("BlackjackRules Turn:")
-    # print("Player Hand: ",player_hand)
-    # print("Dealer Hand: ",dealer_hand)
-    has_ace = Deck.has_usable_ace(player_hand)
-    player_value = Deck.evaluate_hand(player_hand)
-    dealer_value = Deck.evaluate_hand(dealer_hand)
-
-
-    # print("Player Value: ",player_value)
-    # print("Dealer Value: ",dealer_value)
-    # I should only concat the states when something was played and not just sticked
-    if player_value == 21:
-        if dealer_value == 21:
-            #draw
-            return 0,states_in_game
-        else:
-            return 1,states_in_game
-    if BlackjackRules.hand_went_bust(player_hand):
-        if not has_ace:
-            return -1,states_in_game
-        else:
-            Deck.use_ace(player_hand)
-            player_action = False
-            return play_game(policy,player_hand,dealer_hand,
-                             False,dealer_sticks,
-                             states_in_game + Deck.convert_hands_and_action_to_pair(player_hand,dealer_hand,player_action))
-    elif BlackjackRules.hand_went_bust(dealer_hand):
-        if not Deck.has_usable_ace(dealer_hand):
-            return 1,states_in_game
-        else:
-            Deck.use_ace(dealer_hand)
-            # todo understand how dealer sticking goes
-            return play_game(policy, player_hand, dealer_hand, player_sticks, dealer_sticks,states_in_game + Deck.convert_hands_and_action_to_pair(player_hand,dealer_hand,True))
-
-    if player_sticks and dealer_sticks:
-        if player_value > dealer_value:
-            return 1,states_in_game
-        elif player_value < dealer_value:
-            return -1,states_in_game
-        else:
-            return 0,states_in_game
-
-    if player_sticks:
-        #time for the dealer to play
-        if BlackjackRules.dealer_hits(dealer_hand):
-            dealer_hand.append(Deck.deal_card())
-            return play_game(policy,player_hand,dealer_hand,player_sticks,False,states_in_game + Deck.convert_hands_and_action_to_pair(player_hand,dealer_hand,player_sticks))
-        else:
-            # dealer sticks
-            return play_game(policy,player_hand,dealer_hand,player_sticks,True,states_in_game)
-    else:
-        visible_dealer_value = Deck.evaluate_hand(dealer_hand[0:1])
-        # i need to convert the values into the array positions of 10x10x2
-        if player_value <= 11:
-            # it doesnt make sense to not hit while hand<=10
-            # we do this to reduce the state space searched
-            player_hand.append(Deck.deal_card())
-            return play_game(policy, player_hand, dealer_hand, False, dealer_sticks,states_in_game + Deck.convert_hands_and_action_to_pair(player_hand,dealer_hand,False))
-        print(f"Policy for: {player_value - 12},{visible_dealer_value - 2}")
-        # visible dealer value - 2 bcs we mapping 2-11 to 0-9 which are the array dims
-        player_action = policy[player_value-12,visible_dealer_value - 2,int(has_ace)]
-        if player_action == 1:
-            player_hand.append(Deck.deal_card())
-            return play_game(policy,player_hand,dealer_hand,False,dealer_sticks,states_in_game + Deck.convert_hands_and_action_to_pair(player_hand,dealer_hand,bool(player_action)))
-        else:
-            return play_game(policy, player_hand, dealer_hand, True, dealer_sticks,states_in_game + Deck.convert_hands_and_action_to_pair(player_hand,dealer_hand,False))
-# By default the values are True
-
-
+# Game Loop (only used in Monte-Carlo Control with ES)
 def play_game_for_MCC_iterative(policy,initial_player_hand,initial_dealer_hand,initial_action):
     player_hand = initial_player_hand
     dealer_hand = initial_dealer_hand
-
 
     # Hit -> True
     # Stick -> False
     states = [Deck.convert_hands_and_action_to_pair(player_hand,dealer_hand,True)]
     reward = None
     dealer_hits = True
-    player_hits = initial_action
+    player_hits = True
     dealer_value = Deck.evaluate_hand(dealer_hand)
     player_value = Deck.evaluate_hand(player_hand)
     # Player's turn
-    while player_hits:
+    while player_hits: #and not initial_action:
         has_ace = Deck.has_usable_ace(player_hand)
         player_value = Deck.evaluate_hand(player_hand)
         # print(f"Hands are: {player_hand},{dealer_hand} and {player_hits},{dealer_hits}")
@@ -263,16 +188,21 @@ def play_game_for_MCC_iterative(policy,initial_player_hand,initial_dealer_hand,i
                 Deck.use_ace(player_hand)
                 player_hits = True
                 continue
+
         if player_value <= 11:
             # it doesnt make sense to not hit while hand<=10
             # we do this to reduce the state space searched
-            print("Under 11 cards value we just hit")
             player_hits = True
             player_hand.append(Deck.deal_card())
             states.append(Deck.convert_hands_and_action_to_pair(player_hand,dealer_hand,player_hits))
             continue
-
-        visible_dealer_value = Deck.evaluate_hand(dealer_hand[0:1])
+        if initial_action:
+            player_hand.append(Deck.deal_card())
+            states.append(Deck.convert_hands_and_action_to_pair(player_hand, dealer_hand, initial_action))
+            initial_action = False
+            initial_action = False
+            continue
+        visible_dealer_value = Deck.evaluate_hand([dealer_hand[0]])
         # print(f"Policy for: {player_value - 12},{visible_dealer_value - 2}")
         # visible dealer value - 2 bcs we mapping 2-11 to 0-9 which are the array dims
         player_action = policy[player_value - 12, visible_dealer_value - 2, int(has_ace)]
@@ -304,6 +234,7 @@ def play_game_for_MCC_iterative(policy,initial_player_hand,initial_dealer_hand,i
             # dealer sticks
             dealer_hits = False
             continue
+    # Opening hands to determine the winner
     if reward is not None:
         return reward,states
     if player_value > dealer_value:
@@ -312,9 +243,10 @@ def play_game_for_MCC_iterative(policy,initial_player_hand,initial_dealer_hand,i
         reward = -1
     else:
         reward = 0
-
     assert(reward is not None)
     return reward,states
+
+# (Only used in Monte Carlo Prediction)
 value_fn = np.ndarray(shape=(10, 10, 2), dtype='int')
 value_fn[:,:,:] = 0
 
@@ -350,7 +282,7 @@ def MonteCarloPrediction():
                 # we do not need a policy for these we just skip those
                 continue
             #[2,11] -> [0,9]
-            visible_dealer_value = Deck.evaluate_hand(dealer_hand[0:1])
+            visible_dealer_value = Deck.evaluate_hand([dealer_hand[0]])
             # print(f"Policy for: {player_value - 12},{visible_dealer_value - 2}")
             value_fn[player_value-12-1,visible_dealer_value-2,int(has_ace)] = np.average(np.asarray(returns_of_states[(player_value,dealer_value,has_ace)]))
 
@@ -361,41 +293,35 @@ def MonteCarloPrediction():
     # print(result,states)
 
 
-def plot_value_fn_after(fn,V,label_extra):
-    fn()
+def plot_value_fn_after(V,label_extra):
     print("Array shape:", V.shape)
-    # V = V.transpose()
     channel_1 = V[:, :, 0]  # No usable ace
     channel_2 = V[:, :, 1]  # usable ace
-
-    # for index,elem in np.ndenumerate(V):
-    #     new_V[index[1],index[0],index[2]] = V[index[0],index[1],index[2]]
-    # channel_1 = new_V[:, :, 0]  # No usable ace
-    # channel_2 = new_V[:, :, 1]  # usable ace
 
     # Plotting the two channels
     fig1, ax1 = plt.subplots(figsize=(7, 6))
     im1 = ax1.imshow(channel_1, cmap='hot', extent=[12, 21, 1, 10], origin='lower')
-    ax1.set_title("No usable ace")
+    ax1.set_title(f"No usable ace-{iteration_amount} iterations")
     ax1.set_xlabel("Player Sum")
     ax1.set_ylabel("Dealer Showing")
     ax1.set_xticks(range(12, 22))  # X-ticks in range 12 to 21
     ax1.set_yticks(range(1, 11))  # Y-ticks for dealer showing
     fig1.colorbar(im1, ax=ax1)
     plt.tight_layout()
+    plt.savefig(f"Policy-For-Blackjack-No-Usable-Ace-{label_extra}-{np.random.rand()}.pdf", format="pdf", bbox_inches="tight")
     plt.show()
 
     # Second Figure: Channel 2
     fig2, ax2 = plt.subplots(figsize=(7, 6))
     im2 = ax2.imshow(channel_2 , cmap='hot', extent=[12, 21, 1, 10], origin='lower')
-    ax2.set_title("Usable ace")
+    ax2.set_title(f"Usable ace-{iteration_amount} iterations")
     ax2.set_xlabel("Player Sum")
     ax2.set_ylabel("Dealer Showing")
     ax2.set_xticks(range(12, 22))  # X-ticks in range 12 to 21
     ax2.set_yticks(range(1, 11))  # Y-ticks for dealer showing
     fig2.colorbar(im2, ax=ax2)
     plt.tight_layout()
-    plt.savefig(f"Policy-For-Blackjack-{label_extra}.pdf", format="pdf", bbox_inches="tight")
+    plt.savefig(f"Policy-For-Blackjack-Usable-Ace-{label_extra}-{np.random.rand()}.pdf", format="pdf", bbox_inches="tight")
     plt.show()
 
 
@@ -407,49 +333,39 @@ def choose_initial_state_action_pair():
 
 
 def MonteCarloControl(iterations=100_000):
-    # value_fn = np.ndarray(shape=(10, 10, 2), dtype='int')
-    # global value_fn
-    #TODO, add off-policy actions
-    # and randomize with pre-selected seed so i can
-    # get consistent results
-    #TODO
+
     np.set_printoptions(precision=2)
-    # value_fn[:, :, :] = 0
-    # contains arbitrary vals initially
+    # contains random vals initially
     player_policy = np.ndarray(shape=(10, 10, 2), dtype='bool')
     player_policy = np.random.choice([True,False],size=(10,10,2))
     Q_s_a = defaultdict(float)
 
     returns_of_state_action_pairs = defaultdict(list)
-    # pl_hand = ['4','6']
-    # dl_hand = ['8','6']
-    # iterations = 1_000_000
-    # iterations = 100_000
     for i in range(iterations):
+        np.random.seed(random.randint(1,iterations))
         player_hand, dealer_hand, usable_ace, stick_or_hit = choose_initial_state_action_pair()
         result, states = play_game_for_MCC_iterative(player_policy, player_hand, dealer_hand,stick_or_hit)
-        print("First five states", states[:5])
         # Policy Evaluation
         for state in states:
             # in our Scenario this is simple as states do not repeat
             G = result
             player_value, dealer_value, has_ace, dealer_hand,action = state
-            visible_dealer_value = Deck.evaluate_hand(dealer_hand[0:1])
+            visible_dealer_value = Deck.evaluate_hand([dealer_hand[0]])
+            print("Visible dealer value: ",visible_dealer_value)
             if player_value <= 12 or player_value > 21:
                 # we do not need a policy for these we just skip those
                 continue
             returns_of_state_action_pairs[(player_value, visible_dealer_value, has_ace, action)].append(G)
             returns = returns_of_state_action_pairs[(player_value, visible_dealer_value, has_ace, action)]
             if len(returns) == 0:
-                # mhpws tha eprepe na einai float?
                 Q_s_a[(player_value, visible_dealer_value, has_ace, action)] = 0
             else:
-                Q_s_a[(player_value, visible_dealer_value, has_ace, action)] = sum(returns) / len(returns)
+                Q_s_a[(player_value, visible_dealer_value, has_ace, action)] = float(sum(returns)) / len(returns)
 
         # Policy Improvement
         for state in states:
             player_value, dealer_value, has_ace, dealer_hand, action = state
-            visible_dealer_value = Deck.evaluate_hand(dealer_hand[0:1])
+            visible_dealer_value = Deck.evaluate_hand([dealer_hand[0]])
             if player_value <= 11 or player_value > 21:
                 continue
             chosen_action = None
@@ -468,14 +384,9 @@ def MonteCarloControl(iterations=100_000):
     return player_policy
 
 
-for iteration_amount in [100_000]:
-    def nothing():
-        pass
+for iteration_amount in [100_000,200_000,300_000,400_000,500_000,1_000_000]:
     optimal_mcc_policy = MonteCarloControl(iteration_amount)
-    plot_value_fn_after(nothing, optimal_mcc_policy,iteration_amount)
-
-# plot_value_fn_after(MonteCarloPrediction,value_fn)
-
-# for this Player Hand:  ['4', '6']
-# Dealer Hand:  ['8', '6']
-# it gets stuck in loop
+    plot_value_fn_after(optimal_mcc_policy,iteration_amount)
+# iteration_amount = 200_000
+# optimal_mcc_policy = MonteCarloControl(iteration_amount)
+# plot_value_fn_after(optimal_mcc_policy,iteration_amount)
