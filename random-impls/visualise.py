@@ -1,9 +1,20 @@
 import pandas as pd
 import matplotlib.pyplot as plt
 import numpy as np
+from invoke import task
+
+@task
+def run(c):
+    import distance
+    print(distance)
+    example = distance("first","second")
+
+
+
+
 
 # Read data from the specified CSV file
-df = pd.read_csv('./cmake-build-release/results.csv')
+df = pd.read_csv('../cmake-build-debug/results.csv')
 
 # Calculate the percentage improvement of Incremental over Simple
 df['Percentage Improvement'] = ((df['Simple Average Time'] - df['Incremental Average Time']) / df['Simple Average Time']) * 100

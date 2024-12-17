@@ -4,5 +4,5 @@
 
 #ifndef LEVENSHTEIN_DISTANCE_H
 #define LEVENSHTEIN_DISTANCE_H
-
+int calc_levenshtein_distance_of(std::string_view word1,std::string_view word2);
 #endif //LEVENSHTEIN_DISTANCE_H
