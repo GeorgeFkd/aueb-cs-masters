@@ -7,23 +7,21 @@ contract CryptoSOS {
     
     //adding the last parameter in order to have the same code with
     //the multiplayer version
-    //might remove it when im done with both
     event StartGame(address,address,uint128);
     event Move(address,uint8,uint8,uint128);
     event Winner(address,uint128);
     event Tie(address,address,uint128);
-
-    //todo understand memory in Ethereum
+    event GameCancelled(address,uint128);
     struct SoSBoard {
-        // should be initialised with S,O,X-> for empty cells
+        
         uint8[9] values;
-        //default value is address(0) so i can check if they have joined
         address payable player1;
         uint256 player1JoinedAtTimestamp;
         address payable player2;
         bool player1Plays; 
         uint256 lastTurnTimeStamp;
     }
+    //0 means empty cell,1->S,2->O
     uint8[9] default_game = [0,0,0,0,0,0,0,0,0];
 
     SoSBoard[] AvailableGames;
@@ -61,8 +59,6 @@ contract CryptoSOS {
     // If a player joins, and within 2 minutes no other player has joined, he is allowed to get a full
     // reimbursement (1 ether) by calling the cancel() function
     function cancel() public {
-        //check if the map has his address
-        //if not refund him from the balance
         //reset the game by emptying the hash map or moving the index back to 0
         require(gamesCounter == 1,"There is no current game being played");
         require(GameForPlayer[msg.sender] != uint128(0x0),"The sender has not joined the game");
@@ -72,6 +68,7 @@ contract CryptoSOS {
         if ( (currentTime - board.player1JoinedAtTimestamp) > 2 minutes  ) {
             if (board.player1.send(1 ether)) {
                 gamesCounter = 0;
+                emit GameCancelled(board.player1,1);
             } else {
                 revert();
             }
@@ -93,34 +90,40 @@ contract CryptoSOS {
         uint256 currentTime = block.timestamp;
         SoSBoard memory board = getGameOfPlayer(msg.sender);
         if ( (currentTime - board.lastTurnTimeStamp) > 1 minutes ) {
-            address sendMoneyTo = address(0);
+            address payable sendMoneyTo = payable(address(0));
             if (board.player1Plays) {
                 //means player2 gets the money bcs player1 was slow
-                sendMoneyTo = board.player2;
+                sendMoneyTo = payable(board.player2);
             } else {
-                sendMoneyTo = board.player1;
+                sendMoneyTo = payable(board.player1);
             }
 
             //get him 1.5 ether back
-            if (board.player1.send(1.5 ether)) {
+            if (sendMoneyTo.send(1.5 ether)) {
                 //clear the game being played and the related index
                 gamesCounter = 0;
                 //emit Winner
+                emit Winner(sendMoneyTo,1);
             } else {
                 revert();
             }
         }
 
     }   
-    // At any point, anyone may call the getGameState() function, which should return a 9-
-    // character-long string, in which each character is one of {-,S,O}
-    function getGameState() public view returns (SoSBoard memory) {
+
+    function checkGameState() public view returns (SoSBoard memory) {
+        require(gamesCounter == 1, "There is no current game being played");
+        return AvailableGames[1];
+    }
+
+    //each value of the board is is one of {-,S,O} => {0,1,2}
+    function getGameState() private view returns (SoSBoard storage) {
         //for the non-concurrent version we just return the first (and only available) game
         require(gamesCounter == 1, "There is no current game being played");
         return AvailableGames[1];
     }
 
-    function getGameOfPlayer(address pl) public view returns (SoSBoard memory) {
+    function getGameOfPlayer(address pl) private view returns (SoSBoard storage) {
         return AvailableGames[GameForPlayer[pl]];
     }
 
@@ -128,11 +131,11 @@ contract CryptoSOS {
         return box1 == 1 && box2 == 2 && box3 == 1;
     }
 
-    function checkBoardPositions(SoSBoard memory board,uint8 pos1,uint8 pos2,uint8 pos3) private pure returns (bool) {
+    function checkBoardPositions(SoSBoard storage board,uint8 pos1,uint8 pos2,uint8 pos3) private view returns (bool) {
         return checkTripletForSoS(board.values[pos1-1],board.values[pos2-1],board.values[pos3-1]);
     }
 
-    function boardIsFull(SoSBoard memory board) private pure returns (bool) {
+    function boardIsFull(SoSBoard storage board) private view returns (bool) {
         //loop will probably be unrolled anyway, i could do it myself
         for (uint8 i = 0; i < board.values.length; i++) {
             if (board.values[i] == 0) return false;
@@ -140,7 +143,8 @@ contract CryptoSOS {
         return true;
     }
 
-    function checkForWinnerInGame(SoSBoard memory board,address payable whoJustPlayed) public payable {
+    //i want a way to only have it be storage in here, not everywhere
+    function checkForWinnerInGame(SoSBoard storage board,address payable whoJustPlayed) private {
         bool isGameFinished = //check horizontaly -> 1,2,3 | 4,5,6 | 7,8,9
                       checkBoardPositions(board,1,2,3) || 
                       checkBoardPositions(board,4,5,6) || 
@@ -162,7 +166,6 @@ contract CryptoSOS {
         } else {
             if (boardIsFull(board)) {
                 emit Tie(board.player1,board.player2,1);
-                //send 0.95 to each account
                 if (board.player1.send(0.95 ether) && board.player2.send(0.95 ether)) {
                     
                 } else {
@@ -177,10 +180,8 @@ contract CryptoSOS {
 
 
     function placeThing(uint8 thing,uint8 position) private {
-        //this should probably be storage
-        SoSBoard memory game = getGameOfPlayer(msg.sender);
-        //the cell should be empty
-        require(game.values[position] == 0,"the position you chose is not empty");
+        SoSBoard storage game = getGameOfPlayer(msg.sender);
+        require(game.values[position] == 0,"the cell you chose is not empty");
         if (game.player1Plays && msg.sender == game.player1) {
             //p1 turn and the msg was by p1
             game.player1Plays = !game.player1Plays;
@@ -200,8 +201,6 @@ contract CryptoSOS {
 
     function placeS(uint8 choice) public {
         placeThing(1,choice);
-        
-        
     }
 
     function placeO(uint8 choice) public {
