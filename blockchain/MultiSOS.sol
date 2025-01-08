@@ -2,11 +2,11 @@
 pragma solidity ^0.8.26;
 
 
+
 contract CryptoSOS {
     address private owner;
     
-    //adding the last parameter in order to have the same code with
-    //the multiplayer version
+    uint128 LimitOfConcurrentGames = 10000;
     event StartGame(address,address,uint128);
     event Move(address,uint8,uint8,uint128);
     event Winner(address,uint128);
@@ -32,28 +32,48 @@ contract CryptoSOS {
     }
 
 
+    function getLastGame() private view returns (SoSBoard storage) {
+        return AvailableGames[gamesCounter];
+    }
+
+    // The owner of CryptoSOS (i.e., the account that deployed the
+    // CryptoSOS smart contract) can claim the assets collected by CryptoSOS, by calling the
+    // sweepProfit(uint amount) function, which should send the requested amount to
+    // the owner’s account, assuming the balance is sufficient, and that there is enough money left
+    // to pay off prizes or return amounts.
+    function sweepProfit(uint amount) public {
+        require(msg.sender == owner,"game profit margins are for the house");
+        //here it should be paid
+    }
+
     // In order to start playing, a player must call the join() function of CryptoSOS. Then he
     // enters the waiting lobby, until a second player calls join() too, at which point a new game
     // starts between these two players. If a third player calls join(), this will fail (i.e., revert()
     // with a message that a game is already in progress). Of course, after a game has ended, it
     // should be possible for any two players to join and start a new game.
     function join() public payable {
-        require(msg.value == 1 ether);
-        if (gamesCounter == 1) {
-            GameForPlayer[msg.sender] = 1;
-            SoSBoard memory board = getGameOfPlayer(msg.sender);
-            board.player2 = payable(msg.sender);
-            emit StartGame(board.player1,board.player2,1);
-        } else if(gamesCounter == 0) {
+        require(msg.value == 1 ether,"participation is 1 ether");
+        require(gamesCounter < LimitOfConcurrentGames,"the server is full join later");
+
+        //there is probably a logic bug here
+        SoSBoard storage game = getLastGame();
+        if (game.player1 == address(0)) {
+            //he enters a new game and expects another one to join.
+            SoSBoard memory currentGame = SoSBoard(default_game,payable(msg.sender),block.timestamp,payable(address(0)),true,uint256(0));
+            AvailableGames.push(currentGame);
+            GameForPlayer[msg.sender] = gamesCounter;
+            gamesCounter++;
+            emit StartGame(currentGame.player1,currentGame.player2,1);
+        } else if (game.player2 == address(0)) {
+            //he joins a game with already one player
             SoSBoard memory newGame = SoSBoard(default_game,payable(msg.sender),block.timestamp,payable(address(0)),true,uint256(0));
             AvailableGames.push(newGame);
             gamesCounter++;
             GameForPlayer[msg.sender] = gamesCounter;
+            
         } else {
-            //emit Message that there is already a game being played
             revert();
         }
-        
     }
 
     // If a player joins, and within 2 minutes no other player has joined, he is allowed to get a full
@@ -97,7 +117,6 @@ contract CryptoSOS {
             } else {
                 sendMoneyTo = payable(board.player1);
             }
-
             //get him 1.5 ether back
             if (sendMoneyTo.send(1.5 ether)) {
                 //clear the game being played and the related index
@@ -187,12 +206,14 @@ contract CryptoSOS {
             game.player1Plays = !game.player1Plays;
             game.values[position] = thing;
             game.lastTurnTimeStamp = block.timestamp;
+            emit Move(msg.sender,thing,position,GameForPlayer[msg.sender]);
             checkForWinnerInGame(game,game.player1);
         } else if (!game.player1Plays && (msg.sender == game.player2)){
             //p2 turn and the msg was by p2
             game.player1Plays = !game.player1Plays;
             game.values[position] = thing;
             game.lastTurnTimeStamp = block.timestamp;
+            emit Move(msg.sender,thing,position,GameForPlayer[msg.sender]);
             checkForWinnerInGame(game,game.player2);
         } else {
             //wrong player sent message dont do anything
