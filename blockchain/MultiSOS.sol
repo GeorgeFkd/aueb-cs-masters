@@ -4,9 +4,10 @@ pragma solidity ^0.8.26;
 
 
 contract CryptoSOS {
-    address private owner;
-    
-    uint128 LimitOfConcurrentGames = 10000;
+    address payable private owner;
+    uint private totalProfits;
+
+    uint128 LimitOfConcurrentGames = 50;
     event StartGame(address,address,uint128);
     event Move(address,uint8,uint8,uint128);
     event Winner(address,uint128);
@@ -21,6 +22,10 @@ contract CryptoSOS {
         bool player1Plays; 
         uint256 lastTurnTimeStamp;
     }
+
+    function nullGame() private view returns (SoSBoard memory)  {
+        return SoSBoard(default_game,payable(address(0)),uint256(0),payable(address(0)),true,uint256(0));
+    }
     //0 means empty cell,1->S,2->O
     uint8[9] default_game = [0,0,0,0,0,0,0,0,0];
 
@@ -28,7 +33,8 @@ contract CryptoSOS {
     uint128 gamesCounter = 0;
     mapping(address => uint128) private GameForPlayer;
     constructor () {
-        owner = msg.sender;
+        AvailableGames.push(nullGame());
+        owner = payable(msg.sender);
     }
 
 
@@ -41,9 +47,11 @@ contract CryptoSOS {
     // sweepProfit(uint amount) function, which should send the requested amount to
     // the owner’s account, assuming the balance is sufficient, and that there is enough money left
     // to pay off prizes or return amounts.
-    function sweepProfit(uint amount) public {
-        require(msg.sender == owner,"game profit margins are for the house");
-        //here it should be paid
+    function sweepProfit(uint amount ) public {
+        require(msg.sender == owner,"The profits are for running CryptoSOS");
+        if(owner.send(amount)) {
+            totalProfits -= amount;
+        }
     }
 
     // In order to start playing, a player must call the join() function of CryptoSOS. Then he
@@ -55,24 +63,26 @@ contract CryptoSOS {
         require(msg.value == 1 ether,"participation is 1 ether");
         require(gamesCounter < LimitOfConcurrentGames,"the server is full join later");
 
-        //there is probably a logic bug here
+        //Matchmaking Logic
         SoSBoard storage game = getLastGame();
         if (game.player1 == address(0)) {
             //he enters a new game and expects another one to join.
-            SoSBoard memory currentGame = SoSBoard(default_game,payable(msg.sender),block.timestamp,payable(address(0)),true,uint256(0));
-            AvailableGames.push(currentGame);
+            game.player1 = payable(msg.sender);
+            game.player1JoinedAtTimestamp = block.timestamp;
+            game.player1Plays = true;
             GameForPlayer[msg.sender] = gamesCounter;
-            gamesCounter++;
-            emit StartGame(currentGame.player1,currentGame.player2,1);
+            //we do not emit an event as the game has not started
         } else if (game.player2 == address(0)) {
-            //he joins a game with already one player
-            SoSBoard memory newGame = SoSBoard(default_game,payable(msg.sender),block.timestamp,payable(address(0)),true,uint256(0));
-            AvailableGames.push(newGame);
-            gamesCounter++;
+            //he joins the existing game with already one player
+            game.player2 = payable(msg.sender);
             GameForPlayer[msg.sender] = gamesCounter;
-            
+            emit StartGame(game.player1,game.player2,1);
+            //we create an empty board for the next guy to join
+
+            AvailableGames.push(nullGame());
+            gamesCounter++;
         } else {
-            revert();
+            revert("Something went wrong with our code");
         }
     }
 
@@ -80,18 +90,15 @@ contract CryptoSOS {
     // reimbursement (1 ether) by calling the cancel() function
     function cancel() public {
         //reset the game by emptying the hash map or moving the index back to 0
-        require(gamesCounter == 1,"There is no current game being played");
-        require(GameForPlayer[msg.sender] != uint128(0x0),"The sender has not joined the game");
+        require(GameForPlayer[msg.sender] != uint128(0x0),"The sender has not joined a game");
         SoSBoard memory board = getGameOfPlayer(msg.sender);
         require(board.player1 == msg.sender);
         uint256 currentTime = block.timestamp;
         if ( (currentTime - board.player1JoinedAtTimestamp) > 2 minutes  ) {
-            if (board.player1.send(1 ether)) {
-                gamesCounter = 0;
-                emit GameCancelled(board.player1,1);
-            } else {
-                revert();
-            }
+            board.player1.send(1 ether);
+            
+            emit GameCancelled(board.player1,GameForPlayer[msg.sender]);
+            
         }
         
     }
@@ -105,8 +112,7 @@ contract CryptoSOS {
     //If none of the players have played for 5 minutes, then the owner is allowed to call
     //tooslow(), ending the game ahead of time
     function tooslow() public payable {
-        require(gamesCounter == 1, "There is no current game being played");
-        require(GameForPlayer[msg.sender] != uint128(0x0),"The sender has not joined the game");
+        require(GameForPlayer[msg.sender] != uint128(0) && gamesCounter != 0 , "There is no game for this player");
         uint256 currentTime = block.timestamp;
         SoSBoard memory board = getGameOfPlayer(msg.sender);
         if ( (currentTime - board.lastTurnTimeStamp) > 1 minutes ) {
@@ -117,29 +123,25 @@ contract CryptoSOS {
             } else {
                 sendMoneyTo = payable(board.player1);
             }
+            totalProfits += 0.5 ether;
             //get him 1.5 ether back
-            if (sendMoneyTo.send(1.5 ether)) {
-                //clear the game being played and the related index
-                gamesCounter = 0;
-                //emit Winner
-                emit Winner(sendMoneyTo,1);
-            } else {
-                revert();
-            }
+            sendMoneyTo.send(1.5 ether);
+            //clear the game being played and the related index
+            gamesCounter--;
+            emit Winner(sendMoneyTo,1);
+           
         }
 
     }   
 
     function checkGameState() public view returns (SoSBoard memory) {
-        require(gamesCounter == 1, "There is no current game being played");
-        return AvailableGames[1];
+        return AvailableGames[GameForPlayer[msg.sender]];
     }
 
-    //each value of the board is is one of {-,S,O} => {0,1,2}
     function getGameState() private view returns (SoSBoard storage) {
-        //for the non-concurrent version we just return the first (and only available) game
-        require(gamesCounter == 1, "There is no current game being played");
-        return AvailableGames[1];
+
+        require(GameForPlayer[msg.sender] != uint128(0) && gamesCounter != 0 , "There is no game for this player");
+        return AvailableGames[GameForPlayer[msg.sender]];
     }
 
     function getGameOfPlayer(address pl) private view returns (SoSBoard storage) {
@@ -177,24 +179,21 @@ contract CryptoSOS {
                       checkBoardPositions(board,3,5,7);
         if (isGameFinished) {
             emit Winner(whoJustPlayed,1);
-            if (whoJustPlayed.send(1.8 ether)){
-                //do something
-            } else {
-                revert("Something went wrong when sending the 1.8 ether to the winner address");
-            }
+            totalProfits += 0.2 ether;
+            whoJustPlayed.send(1.8 ether);
+            //TODO: implement returns system
+            
         } else {
             if (boardIsFull(board)) {
                 emit Tie(board.player1,board.player2,1);
-                if (board.player1.send(0.95 ether) && board.player2.send(0.95 ether)) {
-                    
-                } else {
-                    revert("Error in transfers for TIE result");
-                }
+                //TODO: implement returns system
+                totalProfits += 0.1 ether;
+                board.player1.send(0.95 ether);
+                board.player2.send(0.95 ether);
+                
+                
             }
         }
-        
-        
-
     }
 
 
@@ -216,6 +215,7 @@ contract CryptoSOS {
             emit Move(msg.sender,thing,position,GameForPlayer[msg.sender]);
             checkForWinnerInGame(game,game.player2);
         } else {
+            revert("Wait for your turn, or use tooslow if the opponent is taking too long");
             //wrong player sent message dont do anything
         }
     }
