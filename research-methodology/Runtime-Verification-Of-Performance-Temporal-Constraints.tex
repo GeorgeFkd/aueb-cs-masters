@@ -105,8 +105,50 @@ I will write some simple things we usually test in such systems.
 \note{This section will probably be done after everything as it is a bit optional now that i think about it}
 \section{Software Solution Discussion}
 \note{This will be written first as it is the core of my work}
-\subsection{Functional Requirements}
+In this section we will talk more in detail about how to implement runtime verification of performance using metric temporal logic.
+\subsection{Technical Requirements}
+For a system component that brings runtime verification capabilities
+
 \subsection{Design Goals}
+The target software architecture we intend to verify is Event-Driven Architecture(EDA), therefore any stated desired goal
+should consider the constraints of a distributed event-driven architecture.
+
+We outline the following Design Goals and explain them more in detail.
+
+\begin{itemize}
+	\item Online execution for real-time violation reports.
+	\item Integration with the existing event-driven ecosystem.(Ease of Integration with a new system)
+	\item Horizontal Scalability
+	\item System Independent
+	\item Performance
+\end{itemize}
+
+
+\par
+\emph{Online execution} is important as the order of magnitude of the data an offline algorithm would need to store is impractical.
+It also provides valuable timely feedback, useful for addressing performance issues early on and avoiding costly downtimes.
+Finally the runtime verification problem by its very nature is more accurately expressed by online algorithms, an offline mode
+would not differ significantly from a simple constraint checking problem using the system logs. In this paper, we focus on the online case.
+\par
+Being \emph{system independent} practically means that the solution does not have a model of the underlying system, only a generic view of it.
+Decoupling from a concrete implementation is necessary, due to the fact that in EDA, the only common denominator between different systems
+is the Event Bus, which is also further segmented into different independent topics. Assuming a specific technology stack is an approach that
+is unrealistic for complex large-scale systems.
+\par
+\emph{Performance} is important to the degree that existing systems are not affected by the addition of the monitoring component into the system.
+As with all performance measurement tools its resource consumption should be a negligible fraction of the total resource consumption of the system.
+Data structures and algorithms should be carefully considered to achieve low time and space complexity. Such large-scale systems operate on the order
+of magnitude of billion operations processed per second thus complexity is crucial in practice.
+\par
+For verification to be practical it should be close to the software development process and not implemented in a separate isolated tool.
+Instead, a solution should be part of the suite of tools that is already used in EDA systems. This way not only the functionality is
+easier to adopt in the software development process, but also benefits from a rich ecosystem to support it.
+
+
+\note{Ensure that horizontal scalability and vertical scalability is properly explained}
+\par
+Horizontal scalability is one of the main features of EDA and thus the monitoring component should be able to operate in a distributed manner.
+Vertical scalability is impractical for systems operating at this scale.
 \subsection{Proposed Architecture}
 \section{Proof of Concept Demonstration}
 \note{This should be around 2-3 days of intense focused work, I will go TDD in order to have the infra ready to produce the results}
