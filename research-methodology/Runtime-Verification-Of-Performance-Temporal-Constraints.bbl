@@ -1,0 +1,98 @@
+\begin{thebibliography}{10}
+
+\bibitem{hendriks_checking_2016}
+M.~Hendriks, M.~Geilen, A.~R.~B. Behrouzian, T.~Basten, H.~Alizadeh, and
+  D.~Goswami, ``Checking {Metric} {Temporal} {Logic} with {TRACE},'' in {\em
+  2016 16th {International} {Conference} on {Application} of {Concurrency} to
+  {System} {Design} ({ACSD})}, (Torun, Poland), pp.~19--24, IEEE, June 2016.
+
+\bibitem{dhananjayan_metric_2014}
+A.~Dhananjayan and K.~T. Seow, ``A metric temporal logic specification
+  interface for real-time discrete-event control,'' {\em IEEE Transactions on
+  Systems, Man, and Cybernetics: Systems}, vol.~44, no.~9, pp.~1204--1215,
+  2014.
+\newblock Publisher: IEEE.
+
+\bibitem{thati_monitoring_2005}
+P.~Thati and G.~Roşu, ``Monitoring {Algorithms} for {Metric} {Temporal}
+  {Logic} {Specifications},'' {\em Electronic Notes in Theoretical Computer
+  Science}, vol.~113, pp.~145--162, Jan. 2005.
+
+\bibitem{pnueli_temporal_1977}
+A.~Pnueli, ``The temporal logic of programs,'' in {\em 18th {Annual}
+  {Symposium} on {Foundations} of {Computer} {Science} (sfcs 1977)},
+  pp.~46--57, Oct. 1977.
+\newblock ISSN: 0272-5428.
+
+\bibitem{koymans_specifying_1990}
+R.~Koymans, ``Specifying real-time properties with metric temporal logic,''
+  {\em Real-Time Systems}, vol.~2, pp.~255--299, Nov. 1990.
+
+\bibitem{trinh_checking_2024}
+T.-B. Trinh, H.-P. Nguyen, D.-H. Nguyen, V.-K. To, and N.-T. Truong, ``Checking
+  {Temporal} {Constraints} of {Events} in {EBS} at {Runtime},'' {\em
+  Cybernetics and Information Technologies}, vol.~24, pp.~82--97, Mar. 2024.
+
+\bibitem{allen_maintaining_1983}
+J.~F. Allen, ``Maintaining knowledge about temporal intervals,'' {\em
+  Communications of the ACM}, vol.~26, pp.~832--843, Nov. 1983.
+
+\bibitem{ganguly_distributed_2024}
+R.~Ganguly, Y.~Xue, A.~Jonckheere, P.~Ljung, B.~Schornstein, B.~Bonakdarpour,
+  and M.~Herlihy, ``Distributed runtime verification of metric temporal
+  properties,'' {\em Journal of Parallel and Distributed Computing}, vol.~185,
+  p.~104801, Mar. 2024.
+
+\bibitem{mackey_early_2024}
+I.~Mackey, R.~Chimni, and J.~Su, ``Early detection of temporal constraint
+  violations,'' {\em Information and Computation}, vol.~296, p.~105114, Jan.
+  2024.
+
+\bibitem{ganguly_runtime_2024}
+R.~Ganguly, A.~Momtaz, and B.~Bonakdarpour, ``Runtime verification of
+  partially-synchronous distributed system,'' {\em Formal Methods in System
+  Design}, June 2024.
+
+\bibitem{dong_diagnosis_2023}
+W.~Dong, S.~Li, and X.~Yin, ``Diagnosis of {Time}-{Sensitive} {Failures} in
+  {Timed} {Discrete}-{Event} {Systems} with {Metric} {Interval} {Temporal}
+  {Logics},'' in {\em 2023 62nd {IEEE} {Conference} on {Decision} and {Control}
+  ({CDC})}, pp.~6827--6833, IEEE, 2023.
+
+\bibitem{norstrom_timed_1999}
+C.~Norstrom, A.~Wall, and W.~Yi, ``Timed automata as task models for
+  event-driven systems,'' in {\em Proceedings {Sixth} {International}
+  {Conference} on {Real}-{Time} {Computing} {Systems} and {Applications}.
+  {RTCSA}'99 ({Cat}. {No}. {PR00306})}, pp.~182--189, IEEE, 1999.
+
+\bibitem{norman_quantitative_2014}
+G.~Norman and D.~Parker, ``Quantitative verification: {Formal} guarantees for
+  timeliness, reliability and performance,'' 2014.
+\newblock Publisher: London Mathematical Society and Smith Institute.
+
+\bibitem{paterson_observation-enhanced_2018}
+C.~Paterson and R.~Calinescu, ``Observation-enhanced {QoS} analysis of
+  component-based systems,'' {\em IEEE Transactions on Software Engineering},
+  vol.~46, no.~5, pp.~526--548, 2018.
+\newblock Publisher: IEEE.
+
+\bibitem{mammar_formal_2024}
+A.~Mammar, M.~Belguidoum, and S.~H. Hiba, ``A formal approach for the correct
+  deployment of cloud applications,'' {\em Science of Computer Programming},
+  vol.~232, p.~103048, 2024.
+\newblock Publisher: Elsevier.
+
+\bibitem{xavier_framework_2024}
+M.~Xavier, V.~Dubinin, S.~Patil, and V.~Vyatkin, ``A {Framework} for the
+  {Generation} of {Monitor} and {Plant} {Model} {From} {Event} {Logs} {Using}
+  {Process} {Mining} for {Formal} {Verification} of {Event}-{Driven}
+  {Systems},'' {\em IEEE Open Journal of the Industrial Electronics Society},
+  vol.~5, pp.~517--534, 2024.
+\newblock Conference Name: IEEE Open Journal of the Industrial Electronics
+  Society.
+
+\bibitem{lamport_what_1983}
+L.~Lamport, ``What good is temporal logic?,'' in {\em {IFIP} congress},
+  vol.~83, pp.~657--668, 1983.
+
+\end{thebibliography}
