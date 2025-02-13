@@ -48,28 +48,6 @@ I.~Mackey, R.~Chimni, and J.~Su, ``Early detection of temporal constraint
   violations,'' {\em Information and Computation}, vol.~296, p.~105114, Jan.
   2024.
 
-\bibitem{ganguly_runtime_2024}
-R.~Ganguly, A.~Momtaz, and B.~Bonakdarpour, ``Runtime verification of
-  partially-synchronous distributed system,'' {\em Formal Methods in System
-  Design}, June 2024.
-
-\bibitem{dong_diagnosis_2023}
-W.~Dong, S.~Li, and X.~Yin, ``Diagnosis of {Time}-{Sensitive} {Failures} in
-  {Timed} {Discrete}-{Event} {Systems} with {Metric} {Interval} {Temporal}
-  {Logics},'' in {\em 2023 62nd {IEEE} {Conference} on {Decision} and {Control}
-  ({CDC})}, pp.~6827--6833, IEEE, 2023.
-
-\bibitem{norstrom_timed_1999}
-C.~Norstrom, A.~Wall, and W.~Yi, ``Timed automata as task models for
-  event-driven systems,'' in {\em Proceedings {Sixth} {International}
-  {Conference} on {Real}-{Time} {Computing} {Systems} and {Applications}.
-  {RTCSA}'99 ({Cat}. {No}. {PR00306})}, pp.~182--189, IEEE, 1999.
-
-\bibitem{norman_quantitative_2014}
-G.~Norman and D.~Parker, ``Quantitative verification: {Formal} guarantees for
-  timeliness, reliability and performance,'' 2014.
-\newblock Publisher: London Mathematical Society and Smith Institute.
-
 \bibitem{paterson_observation-enhanced_2018}
 C.~Paterson and R.~Calinescu, ``Observation-enhanced {QoS} analysis of
   component-based systems,'' {\em IEEE Transactions on Software Engineering},

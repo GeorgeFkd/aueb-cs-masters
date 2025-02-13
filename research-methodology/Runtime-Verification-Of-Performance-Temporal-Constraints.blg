@@ -1,0 +1,46 @@
+This is BibTeX, Version 0.99d (TeX Live 2024/TeX Live for SUSE Linux)
+Capacity: max_strings=200000, hash_size=200000, hash_prime=170003
+The top-level auxiliary file: Runtime-Verification-Of-Performance-Temporal-Constraints.aux
+The style file: ieeetr.bst
+Database file #1: Research-Methodology-Paper.bib
+You've used 13 entries,
+            1876 wiz_defined-function locations,
+            566 strings with 6260 characters,
+and the built_in function-call counts, 4341 in all, are:
+= -- 469
+> -- 136
+< -- 0
++ -- 51
+- -- 38
+* -- 300
+:= -- 580
+add.period$ -- 18
+call.type$ -- 13
+change.case$ -- 13
+chr.to.int$ -- 0
+cite$ -- 13
+duplicate$ -- 234
+empty$ -- 376
+format.name$ -- 38
+if$ -- 1074
+int.to.chr$ -- 0
+int.to.str$ -- 13
+missing$ -- 13
+newline$ -- 47
+num.names$ -- 13
+pop$ -- 28
+preamble$ -- 1
+purify$ -- 0
+quote$ -- 0
+skip$ -- 203
+stack$ -- 0
+substring$ -- 340
+swap$ -- 125
+text.length$ -- 0
+text.prefix$ -- 0
+top$ -- 0
+type$ -- 0
+warning$ -- 0
+while$ -- 46
+width$ -- 15
+write$ -- 144
