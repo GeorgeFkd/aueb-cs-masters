@@ -240,14 +240,15 @@ The properties of the system can be expressed in MTL in the following manner:
 
 
 \section{Future Work}
-The research presented in this work lays the foundation for practical runtime verification of performance in event-based systems using Metric Temporal Logic (MTL). However, several avenues remain unexplored and present exciting opportunities for future research. Below, we outline key directions for extending this work:
+The research presented in this work attempts to apply runtime verification in performance monitoring using MTL for event-based systems. However to fully adopt MTL in enterprise EBS there needs to be additional work. Below, we outline key directions for extending this work:
 
 \begin{itemize}
 	\item \emph{Rigorous Integration with Application Protocols}: \\
 	      A promising direction is the integration of MTL-based runtime verification with widely used application protocols such as \emph{GraphQL}, \emph{gRPC}, and \emph{REST}. These protocols are fundamental to modern distributed systems, and ensuring their compliance with temporal performance properties could significantly enhance system reliability and efficiency. Future work could focus on developing protocol-specific adapters that translate protocol-level events into MTL-compatible formats, enabling seamless verification across diverse communication paradigms.
 
 	\item \emph{Autoscaling Infrastructure Resources in Response to Violations}: \\
-	      Another critical area of exploration is the dynamic adjustment of infrastructure resources based on violations of MTL properties. By coupling runtime verification with \emph{autoscaling mechanisms}, systems could proactively respond to performance degradation or violations of temporal constraints. For instance, if an MTL property specifying a maximum response time is violated, the system could automatically scale up computational resources to mitigate the issue. This approach would bridge the gap between runtime verification and adaptive system management.
+	      Another critical area of exploration is the dynamic adjustment of infrastructure resources based on violations of MTL properties. By coupling runtime verification with \emph{autoscaling mechanisms}, systems could respond to performance degradation captured by violations of temporal constraints.
+
 
 	\item \emph{Generating Metric Temporal Propositions from Event Logs Using Process Mining}: \\
 	      Automating the generation of MTL propositions from event logs using \emph{process mining} techniques represents a significant step toward making runtime verification more accessible. Process mining can uncover patterns and temporal relationships in event logs, which can then be formalized as MTL properties. Future work could focus on developing algorithms and tools to extract meaningful MTL propositions from historical event data, reducing the manual effort required for specification and enabling more comprehensive verification.
