@@ -1,6 +1,10 @@
 **/*.so
-
+**/node_modules
 **/*.aux
+**/.idea
+
+**/.env*
 **/*.log
 **/*.out
+**/.env
 cmake-*/

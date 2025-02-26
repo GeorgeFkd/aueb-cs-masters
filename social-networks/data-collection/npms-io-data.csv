@@ -1,0 +1,36 @@
+Package,Description,Author,Maintainers,Github Repository
+react-redux,Official React bindings for Redux,Dan Abramov,gaearon-timdorr-acemarke,https://github.com/reduxjs/react-redux
+react-router,Declarative routing for React,Remix Software,timdorr-mjackson-chancestrickland,https://github.com/remix-run/react-router
+@testing-library/react,Simple and complete React DOM testing utilities that encourage good testing practices.,Kent C. Dodds,jdecroock-testing-library-bot-kentcdodds-timdeschryver-patrickhulce-dfcook-gpx-mpeyper-mihar-22-pago-cmckinstry-thymikee-brrianalexis,https://github.com/testing-library/react-testing-library
+react-router-dom,Declarative routing for React web applications,Remix Software,timdorr-mjackson-chancestrickland,https://github.com/remix-run/react-router
+@mdx-js/react,React context for MDX,John Otander,johno-silvenon-timneutkens-wooorm,https://github.com/mdx-js/mdx
+@emotion/react,> Simple styling in React.,Emotion Contributors,tkh44-mitchellhamilton-emotion-release-bot-andarist,https://github.com/emotion-js/emotion
+@babel/preset-react,Babel preset for all React plugins.,Sebastian McKenzie,hzoo-loganfsmyth-danez-existentialism-nicolo-ribaudo-jlhwung,https://github.com/babel/babel
+react-bootstrap,Bootstrap 5 components built with React,Stephen J. Collings,monastic.panic-taion-kytsang,https://github.com/react-bootstrap/react-bootstrap
+react-fast-compare,Fastest deep equal comparison for React. Great for React.memo & shouldComponentUpdate. Also really fast general-purpose deep comparison.,Chris Bolin,robwalkerco-gksander-sarahformidable-scott-rippey-jpdriver-yankovalera-valgeorgiev-michaelmerrill-sarmeyer-mariano-formidable-carlospaelinck-ryanisinallofus-samwhale-ryan.roemer-formidable-owner-eastridge-exogen-beccanelson-philpl-mfulgham-jmcbee1-formidablelabs-carbonrobot-manosim-masiddee-chrisbolin,https://github.com/FormidableLabs/react-fast-compare
+react-popper,Official library to use Popper on React projects,Travis Arnold,fezvrasta-souporserious,https://github.com/popperjs/react-popper
+mobx-react-lite,Lightweight React bindings for MobX based on React 16.8+ and Hooks,Daniel K.,fredyc-mweststrate,https://github.com/mobxjs/mobx
+react-dropzone,Simple HTML5 drag-drop zone with React.js,Param Aggarwal,rolandjitsu-rxmarbles-okonet,https://github.com/react-dropzone/react-dropzone
+react-i18next,Internationalization for react done right. Using the i18next i18n ecosystem.,Jan Mühlemann,adrai-jamuhl,https://github.com/i18next/react-i18next
+react-error-boundary,Simple reusable React error boundary component,Brian Vaughn,kentcdodds-brianvaughn,https://github.com/bvaughn/react-error-boundary
+@svgr/babel-plugin-transform-react-native-svg,Transform DOM elements into react-native-svg components,Greg Bergé,neoziro,https://github.com/gregberge/svgr/tree/master
+@testing-library/react-hooks,Simple and complete React hooks testing utilities that encourage good testing practices.,Michael Peyper,jdecroock-testing-library-bot-kentcdodds-timdeschryver-patrickhulce-dfcook-gpx-mpeyper-mihar-22-pago-cmckinstry-thymikee-brrianalexis,https://github.com/testing-library/react-hooks-testing-library
+mobx-react,React bindings for MobX. Create fully reactive components.,Michel Weststrate,fredyc-mweststrate-eshenbrener-andykog,https://github.com/mobxjs/mobx
+react-toastify,React notification made easy,Fadi Khadra,sniphpet,https://github.com/fkhadra/react-toastify
+react-colorful,🎨 A tiny (2 8 KB) color picker component for React and Preact apps. Fast, well-tested, dependency-free, mobile-friendly and accessible,Vlad Shilov,omgovich,https://github.com/omgovich/react-colorful
+react-markdown,React component to render markdown,Espen Hovlandsdal,johno-wooorm,https://github.com/remarkjs/react-markdown
+@material-ui/core,React components that implement Google's Material Design.,Material-UI Team,siriwatknp-mnajdova-oliviertassinari-hai-cea-mbrookes-joshwooding-eps1lon,https://github.com/mui-org/material-ui
+@react-spring/rafz,react-spring's fork of rafz one frameloop to rule them all,Josh Ellis,tdfka_rick,https://github.com/pmndrs/react-spring
+@svgr/core,Transform SVG into React Components.,Greg Bergé,neoziro,https://github.com/gregberge/svgr/tree/master
+rxjs,Reactive Extensions for modern JavaScript,Ben Lesh,cartant-blesh-kwonoj,https://github.com/reactivex/rxjs
+@react-spring/shared,Globals and shared modules,Paul Henschel,tdfka_rick,https://github.com/pmndrs/react-spring
+ts-jest,A Jest transformer with source map support that lets you use Jest to test projects written in TypeScript,Kulshekhar Kabra,kul-anhpnnd-tsjest,https://github.com/kulshekhar/ts-jest
+@react-spring/animated,Animated component props for React,Paul Henschel,tdfka_rick,https://github.com/pmndrs/react-spring
+react-query,Hooks for managing  caching and syncing asynchronous and remote data in React,tannerlinsley,tannerlinsley,https://github.com/tannerlinsley/react-query
+eslint-plugin-react,React specific linting rules for ESLint,Yannick Croissant,yannickcr-ljharb,https://github.com/jsx-eslint/eslint-plugin-react
+react-spring,<p align="center">   <img src="https://i.imgur.com/QZownhg.png" width="240" /> </p>,Paul Henschel,drcmda-tdfka_rick,https://github.com/pmndrs/react-spring
+@react-spring/web,`react-dom` support,Paul Henschel,tdfka_rick,https://github.com/pmndrs/react-spring
+@react-spring/core,The platform-agnostic core of `react-spring`,Paul Henschel,tdfka_rick,https://github.com/pmndrs/react-spring
+@sentry/react,Official Sentry SDK for React.js,Sentry,benvinegar-billyvg-mitsuhiko-haza-kamilogorek-jauer-sentry-bot-evanpurkhiser-lynnagara-leedongwei-markstory-zeeg,https://github.com/getsentry/sentry-javascript
+classnames,A simple utility for conditionally joining classNames together,Jed Watson,jedwatson-dcousens,https://github.com/JedWatson/classnames
+react-intl,Internationalize React apps. This library provides React components and an API to format dates  numbers, and strings, including pluralization and handling translations.,Eric Ferraiuolo,longlho-redonkulus-pyrocat-caridy-juandopazo-clarle-okuryu-ericf,https://github.com/formatjs/formatjs

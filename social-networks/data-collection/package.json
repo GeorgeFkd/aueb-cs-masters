@@ -1,0 +1,30 @@
+{
+  "type": "module",
+  "module": "es2022",
+  "target": "es2022",
+  "name": "social-networks-project",
+  "version": "0.0.1",
+  "description": "Analysing Github FOSS data in order to apply Social Network Analysis methodologies",
+  "main": "index.ts",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/georgefkd/aueb-cs-masters.git"
+  },
+  "author": "George Fakidis",
+  "license": "GPL-3.0",
+  "bugs": {
+    "url": "https://github.com/georgefkd/aueb-cs-masters/issues"
+  },
+  "homepage": "https://github.com/georgefkd/aueb-cs-masters#readme",
+  "dependencies": {
+    "dotenv": "^16.4.7",
+    "nodemon": "^3.1.9",
+    "octokit": "^4.1.2"
+  },
+  "devDependencies": {
+    "@types/node": "^22.13.4"
+  }
+}
