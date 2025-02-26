@@ -2,7 +2,7 @@
 **/node_modules
 **/*.aux
 **/.idea
-
+**/target
 **/.env*
 **/*.log
 **/*.out
