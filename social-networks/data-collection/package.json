@@ -5,8 +5,11 @@
   "name": "social-networks-project",
   "version": "0.0.1",
   "description": "Analysing Github FOSS data in order to apply Social Network Analysis methodologies",
-  "main": "index.ts",
+  "main": "dist/index.js",
   "scripts": {
+    "build": "tsc",
+    "start": "node dist/index.js",
+    "dev": "tsx index.ts",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
@@ -23,9 +26,11 @@
     "command-line-args": "^6.0.1",
     "dotenv": "^16.4.7",
     "nodemon": "^3.1.9",
-    "octokit": "^4.1.2"
+    "octokit": "^4.1.2",
+    "sqlite3": "^5.1.7"
   },
   "devDependencies": {
-    "@types/node": "^22.13.4"
+    "@types/node": "^22.13.4",
+    "tsx": "^4.19.3"
   }
 }
