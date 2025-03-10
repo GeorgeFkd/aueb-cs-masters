@@ -6,12 +6,12 @@ const sqlitedb = sqlite3.verbose()
 const db = new sqlitedb.Database(`github-data-${Date.now().toString()}.db` )
 dotenv.config()
 console.log("Creating tables of sqlite db")
-db.run(`CREATE TABLE gh_users(
+db.run(`CREATE TABLE IF NOT EXISTS gh_users(
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         username TEXT UNIQUE
     );`)
 
-db.run(`CREATE TABLE pull_requests(
+db.run(`CREATE TABLE IF NOT EXISTS pull_requests(
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         pr_link TEXT UNIQUE,
         repo TEXT,
@@ -19,7 +19,7 @@ db.run(`CREATE TABLE pull_requests(
         FOREIGN KEY (author_id) REFERENCES gh_users(id)
     );`)
 
-db.run(`CREATE TABLE pr_review (
+db.run(`CREATE TABLE IF NOT EXISTS pr_review (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         pr_id INTEGER,
         reviewer_id INTEGER,
