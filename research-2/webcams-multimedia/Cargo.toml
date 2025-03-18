@@ -5,3 +5,12 @@ edition = "2021"
 
 [dependencies]
 gstreamer = "0.23.5"
+
+
+[[bin]]
+name="video-sender"
+path="src/main.rs"
+
+[[bin]]
+name="video-receiver"
+path="src/receiver.rs"
