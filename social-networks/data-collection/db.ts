@@ -3,7 +3,7 @@ import dotenv from "dotenv"
 import {GhAnalysisResults} from "./types";
 import {getRepoFromPrLink} from "./utils";
 const sqlitedb = sqlite3.verbose()
-const db = new sqlitedb.Database(`github-data-${Date.now().toString()}.db` )
+const db = new sqlitedb.Database(`github-data-latest.db` )
 dotenv.config()
 console.log("Creating tables of sqlite db")
 db.run(`CREATE TABLE IF NOT EXISTS gh_users(
@@ -27,8 +27,13 @@ db.run(`CREATE TABLE IF NOT EXISTS pr_review (
         FOREIGN KEY (reviewer_id) REFERENCES gh_users(id)
     );`)
 console.log("creating of tables was completed")
+db.run(`CREATE INDEX IF NOT EXISTS idx_pr_author ON pull_requests(author_id);`)
 
-let failedRepos = []
+db.run(`CREATE INDEX IF NOT EXISTS idx_review_reviewer ON pr_review(reviewer_id);`)
+
+db.run(`CREATE INDEX IF NOT EXISTS idx_pr_repo ON pull_requests(repo);`)
+console.log("creating of indexes was completed")
+
 // Promisify database methods
 const dbRun = (sql: string, params: any[] = []): Promise<{ lastID: number }> =>
     new Promise((resolve, reject) => {
@@ -58,7 +63,7 @@ async function getOrCreatePR(prLink: string, repo: string, authorId: number): Pr
     if (existingPR) return existingPR.id;
 
     const result = await dbRun(
-        'INSERT INTO pull_requests (pr_link, repo, author_id) VALUES (?, ?, ?)',
+        `INSERT INTO pull_requests (pr_link, repo, author_id) VALUES (?, ?, ?);`,
         [prLink, repo, authorId]
     );
     return result.lastID;
@@ -122,6 +127,18 @@ async function persistResultToStorage(r: GhAnalysisResults): Promise<GhAnalysisR
     return r;
 }
 
+async function repoExists(owner:string, repo:string):Promise<boolean> {
+    try {
+        const query = `SELECT EXISTS(SELECT 1 from pull_requests where repo='${owner}/${repo}') as repo_exists;`;
+        const result = await dbGet(query,[])
+        return result["repo_exists"]
+    } catch (e) {
+        console.log(`While checking if repo ${owner}/${repo} exists got an error from db: ${e}`)
+        return false;
+    }
+
+}
 
 
-export {dbGet,dbRun,db,getOrCreateUser,getOrCreatePR,addReview,persistResultToStorage}
+
+export {dbGet,dbRun,db,getOrCreateUser,getOrCreatePR,addReview,persistResultToStorage,repoExists}
