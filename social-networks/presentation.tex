@@ -1,0 +1,158 @@
+\documentclass[]{beamer}
+
+
+\title{Clustering Large Attributed Graphs: An Efficient Incremental Approach(Citation)}
+\subtitle{A brief presentation explaining the work of - - -}
+\author{George Fakidis}
+\date{June 2025}
+\institute[]{Athens University of Economics and Business}
+\usetheme{Warsaw}
+\begin{document}
+
+	
+	\frame{\titlepage}
+	\begin{frame}
+		\frametitle{Conceptual Overview}
+		\begin{itemize}
+			\item \emph{Attributed Graphs}: We add a set of m attributes to the classical graph formulation(G=(V,E)). Each vertex is associated with an attribute vector.
+			\item \emph{Clustering}: we want to group graph nodes into separate clusters, useful for a variety of tasks. Like the popular k-means algorithm but the distance measure is specific to attributed graphs.
+			\item \emph{Objectives in attributed Graph Clustering}: Short distances within cluster, large distances between clusters. 
+			
+			Similar attribute values of vertices within cluster, different attribute values of vertices between clusters.
+			
+			\item \emph{Incremental}: Intermediate calculation results are used in the next iteration as a shortcut to avoid expensive recalculations.
+		\end{itemize}
+	\end{frame}
+	\begin{frame}[allowframebreaks]
+		\frametitle{Graph Model}
+		\begin{itemize}
+			\item \emph{Attributed Graph Definition}: \(G=(V,E,A)\), \(V\) is the set of vertices, \(E\) the set of edges, and \(A\) is the set of m attributes that are associated with vertices in \(V\). Each vertex \(v \in V \), is associated with an attribute vector \([a_1,\ldots,a_m]\).
+			\item \emph{Attribute Augmented Graph Definition}: Basically introducing attribute vertices for each possible value of each attribute. Vertices associate themselves with attribute vertices through attribute edges.
+			\item \emph{Random Walk Distance}: The distance measure is a unification of structural distance(vertex edges) and attribute distance(attribute edges).
+			
+		\end{itemize}
+		\framebreak
+		\begin{itemize}
+			\item \emph{Transition probability from node vertex to node vertex through structure edge}: ($Pv$)
+			\[
+			\frac{W_e}{|N(v_i)| \cdot W_e + \sum_{i=1}^{m} W_{a_{im}}}
+			\]
+			
+			\item \emph{Transition probability from node vertex to attribute vertex through an attribute edge}: ($A$)
+			\[
+			\frac{W_e}{|N(v_i)| \cdot W_{ea} + \sum_{i=1}^{m} W_{a_{im}}}
+			\]	
+			
+			\item \emph{Transition probability from attribute vertex to node vertex(through attribute edge)}:  ($B$)
+			\[
+			\frac{1}{|N(v_i)|}
+			\]
+			
+			\item If the respective edge,either structure edge or attribute edge,does not exist, the probability is simply 0.
+		\end{itemize}
+		
+		\framebreak
+		The transition probability matrix(calculated from the equations above) is: 
+		\[
+		P_A = \begin{bmatrix}
+			Pv & A \\
+			B & O
+		\end{bmatrix}
+		\]
+		The O in the matrix are zeros as we cannot move from attribute vertex to another attribute vertex.
+		\linebreak[1]
+		
+		The Random Walk distance matrix is:
+		\[
+		R_A = \sum_{i=1}^{l} c \cdot (1-c)^l \cdot P_A^l
+		\]
+	\end{frame}
+	\begin{frame}
+		\frametitle{SA-Cluster Algorithm Overview}
+		A simple high level description of the algorithm:
+		
+		\hspace{\parindent} 1. Each vertex gets assigned to its closest centroid($O(n)$).
+		
+		\hspace{\parindent} 2. Update cluster centroids($O(n)$).
+		
+		\hspace{\parindent} 3. Adjust attribute edge weights ${w1,\ldots,w_m}$.
+		
+		\hspace{\parindent} 4. Re-calculate the random walk distance matrix $R_A$(for walk distance L: $O(L*n^3)$ due to matrix operations).
+		
+		
+		Repeat until convergence
+	\end{frame}
+	\begin{frame}
+		\frametitle{The incremental approach and why it matters}
+		\begin{itemize}
+		
+		\item The expensive part of the algorithm is the random walk distance matrix calculation. 
+		
+		\item Goal: Update $R_A$ iteratively, using the $R_Aprev$ and the weight increments $\{\Delta w_1, \ldots, \Delta w_m\}$. To do that we need to find $\Delta R_Aprev$ and finally update the matrix using $R_A= R_Aprev + \Delta R_Aprev$.
+		
+		\item In $R_Aprev$ we calculate only the changed elements, those affected by edge weight changes.
+		\end{itemize}
+	\end{frame}
+	\begin{frame}
+		\frametitle{How the proposed algorithm works}
+		The rest of the algorithm remains the same, here we see how we calculate the random walk matrix from one iteration to the next in an iterative manner to reduce the $O(L*n^3)$ cost of the original calculation.
+		\begin{itemize}
+			
+			\item Calculate the base value for the iteration $ \Delta P_A^1 $
+			\item Calculate the increment and add it to the result
+			\[
+			\Delta P_A^l = \begin{bmatrix}
+				\Delta P_{V_l} & \Delta A_l \\
+				\Delta B_l & \Delta C_l 
+			\end{bmatrix},
+			\Delta R_A += c(1-c)^l\Delta P_A^l
+			\]
+			\item Repeat for each step of the walk.
+			
+			\item Finally return $Rnext = R_A + \Delta R_A$.
+		\end{itemize}
+		
+	\end{frame}
+	\begin{frame}
+		\frametitle{Technical Details} 
+		\begin{itemize}
+			\item $\Delta PV_l = \Delta PV_{l-1} \cdot PV_1 + \Delta A_{l-1} \cdot B_1$
+			\item $\Delta B_l = \Delta B_{l-1} \cdot PV_1 + \Delta C_{l-1} \cdot B_1$
+			\item $\Delta A_l = [\Delta \omega_1 \cdot A_{l,a_1}, \ldots, \Delta \omega_m \cdot A_{l,a_m}] + \Delta PV_{l-1} \cdot AN_{1}$
+			\item $\Delta C_l = [\Delta \omega_1 \cdot C_{l,a_1}, \ldots, \Delta \omega_m \cdot C_{l,a_m}] + \Delta B_{l-1} \cdot AN_{1}$
+			
+			\item $\Delta P_A^l = \begin{bmatrix}
+				\Delta P_{V_l} & \Delta A_l \\
+				\Delta B_l & \Delta C_l 
+			\end{bmatrix}$
+		\end{itemize}
+	\end{frame}
+	\begin{frame}
+		\frametitle{Theoretical Results}
+		\begin{itemize}
+			
+		
+		\item The total number of zero elements in $\Delta P_A^2$ is $O(n^2)$. This means that most elements do not change which entails that a small number of elements of the matrix need an update. Here, $n_i$ is the size of the domain of attribute $a_i$. We assume that vertices are evenly distributed in the possible values of the attribute vector.
+		\item Upper bound: \[
+		\frac{n^2 \times \prod_{i=1}^{m} (n_i - 1)}{\prod_{i=1}^{m} n_i}
+		\]
+		
+		\item Lower bound: \[
+		\left( 2n - \prod_{i=1}^{m} n_i \right) \times \prod_{i=1}^{m} (n_i - 1)
+		\]
+	\end{itemize}
+	\end{frame}
+	\begin{frame}
+		\frametitle{Experimental Results}
+		\begin{itemize}
+		\item Runtime in Seconds is around 1/3 to 1/4 of the original non-incremental implementation.
+		\item Cluster quality is the same, there are no significant differences.
+	\end{itemize} 
+	\end{frame}
+	\begin{frame}%%     2
+		\begin{center}
+			{\fontsize{40}{40}\selectfont Thank You!}
+		\end{center}
+	\end{frame}
+	
+\end{document}

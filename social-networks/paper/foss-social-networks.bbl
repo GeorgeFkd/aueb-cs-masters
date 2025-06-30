@@ -1,0 +1,45 @@
+\begin{thebibliography}{1}
+
+\bibitem{thompson_large-scale_2017}
+C.~Thompson and D.~Wagner, ``A {Large}-{Scale} {Study} of {Modern} {Code}
+  {Review} and {Security} in {Open} {Source} {Projects},'' in {\em Proceedings
+  of the 13th {International} {Conference} on {Predictive} {Models} and {Data}
+  {Analytics} in {Software} {Engineering}}, (Toronto Canada), pp.~83--92, ACM,
+  Nov. 2017.
+
+\bibitem{yu_reviewer_2016}
+Y.~Yu, H.~Wang, G.~Yin, and T.~Wang, ``Reviewer recommendation for
+  pull-requests in {GitHub}: {What} can we learn from code review and bug
+  assignment?,'' {\em Information and software technology}, vol.~74,
+  pp.~204--218, 2016.
+\newblock Publisher: Elsevier.
+
+\bibitem{afsarmanesh_who_2016}
+N.~Kerzazi and I.~El~Asri, ``Who {Can} {Help} to {Review} {This} {Piece} of
+  {Code}?,'' in {\em Collaboration in a {Hyperconnected} {World}}
+  (H.~Afsarmanesh, L.~M. Camarinha-Matos, and A.~Lucas~Soares, eds.), vol.~480,
+  pp.~289--301, Cham: Springer International Publishing, 2016.
+\newblock Series Title: IFIP Advances in Information and Communication
+  Technology.
+
+\bibitem{teixeira_lessons_2015}
+J.~Teixeira, G.~Robles, and J.~M. González-Barahona, ``Lessons learned from
+  applying social network analysis on an industrial {Free}/{Libre}/{Open}
+  {Source} {Software} ecosystem,'' {\em J Internet Serv Appl}, vol.~6, p.~14,
+  Aug. 2015.
+
+\bibitem{yang_mining_2016}
+X.~Yang, R.~G. Kula, N.~Yoshida, and H.~Iida, ``Mining the modern code review
+  repositories: a dataset of people, process and product,'' in {\em Proceedings
+  of the 13th {International} {Conference} on {Mining} {Software}
+  {Repositories}}, {MSR} '16, (New York, NY, USA), pp.~460--463, Association
+  for Computing Machinery, May 2016.
+
+\bibitem{hamasaki_who_2013}
+K.~Hamasaki, R.~G. Kula, N.~Yoshida, A.~E.~C. Cruz, K.~Fujiwara, and H.~Iida,
+  ``Who does what during a code review? {Datasets} of {OSS} peer review
+  repositories,'' in {\em 2013 10th {Working} {Conference} on {Mining}
+  {Software} {Repositories} ({MSR})}, pp.~49--52, May 2013.
+\newblock ISSN: 2160-1860.
+
+\end{thebibliography}

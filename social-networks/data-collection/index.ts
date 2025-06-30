@@ -12,11 +12,11 @@ import {
     PRDetails,
     PRInteractionsMap,
     PRState
-} from "./types";
+} from "./types.ts";
 
-import {persistResultToStorage,repoExists} from "./db";
-import {extractOwnerAndRepoNameFromUrl} from "./utils";
-import {getIssueDetails, getIssues, getMergedPullRequests, getPullRequestDetails} from "./github";
+import {persistResultToStorage,repoExists} from "./db.ts";
+import {extractOwnerAndRepoNameFromUrl} from "./utils.ts";
+import {getIssueDetails, getIssues, getMergedPullRequests, getPullRequestDetails} from "./github.ts";
 dotenv.config()
 
 async function getMostPopularFossPackagesFromNPM(options:CliOptions) {
@@ -52,7 +52,7 @@ async function getMostPopularFossPackagesFromNPM(options:CliOptions) {
 
 const cliOptions = [
     {
-        name:"query", alias:"q",type:String,defaultValue:"vue"
+        name:"query", alias:"q",type:String,defaultValue:"angular"
     },
     {
         name:"keywords",alias:"k",type:String,multiple:true,defaultValue:[]

@@ -1,0 +1,189 @@
+COURSE="INTRODUCTION TO CRYPTOHACK"
+def print_flag_for(course,challenge,flag):
+    print("In course: ",course," Challenge:",challenge," Result: ",flag)
+
+hex_string = "63727970746f7b596f755f77696c6c5f62655f776f726b696e675f776974685f6865785f737472696e67735f615f6c6f747d"
+decoded_bytes = bytes.fromhex(hex_string)
+flag = decoded_bytes.decode('ascii')
+print_flag_for(COURSE,"Hex",flag)
+
+
+import base64
+hex_string = "72bca9b68fc16ac7beeb8f849dca1d8a783e8acf9679bf9269f7bf"
+byte_data = bytes.fromhex(hex_string)
+base64_encoded = base64.b64encode(byte_data)
+flag = base64_encoded.decode('ascii')
+print_flag_for(COURSE,"Base64",flag)
+
+from Crypto.Util.number import long_to_bytes
+num = 11515195063862318899931685488813747395775516287289682636499965282714637259206269
+message_bytes = long_to_bytes(num)
+flag = message_bytes.decode('utf-8')
+print_flag_for(COURSE,"Bytes and Big Integers",flag)
+
+def xor_with(s,n):
+    return ''.join(chr(ord(c) ^ n) for c in s)
+
+label = "label"
+new_string = xor_with(label,13)
+flag = f"crypto{{{new_string}}}"
+print_flag_for(COURSE,"XOR Starter",flag)
+
+from binascii import unhexlify
+from Crypto.Util.strxor import strxor
+
+key1_hex = "a6c8b6733c9b22de7bc0253266a3867df55acde8635e19c73313"
+key2_xor_key1_hex = "37dcb292030faa90d07eec17e3b1c6d8daf94c35d4c9191a5e1e"
+key2_xor_key3_hex = "c1545756687e7573db23aa1c3452a098b71a7fbf0fddddde5fc1"
+flag_xor_all_hex = "04ee9855208a2cd59091d04767ae47963170d1660df7f56f5faf"
+
+key1 = unhexlify(key1_hex)
+key2_xor_key1 = unhexlify(key2_xor_key1_hex)
+key2_xor_key3 = unhexlify(key2_xor_key3_hex)
+flag_xor_all = unhexlify(flag_xor_all_hex)
+key2 = strxor(key2_xor_key1, key1)
+key3 = strxor(key2_xor_key3, key2)
+intermediate = strxor(flag_xor_all, key1)
+intermediate = strxor(intermediate, key2)
+flag = strxor(intermediate, key3)
+flag = "crypto{" + flag.decode() + "}"
+print_flag_for(COURSE,"XOR Properties",flag)
+
+from binascii import unhexlify
+
+cipher_hex = "73626960647f6b206821204f21254f7d694f7624662065622127234f726927756d"
+cipher_bytes = unhexlify(cipher_hex)
+#Single byte -> 0-255
+flag = ""
+for key in range(256):
+    # XOR each byte with the key
+    decoded = bytes([b ^ key for b in cipher_bytes])
+    try:
+        # Try decoding as ASCII
+        decoded_str = decoded.decode('ascii')
+        if "crypto" in decoded_str:
+            print(f"Key: {key}")
+            print(f"Flag: {decoded_str}")
+            flag = decoded_str
+            break
+    except UnicodeDecodeError:
+        # Skip non-ASCII results
+        continue
+
+print_flag_for(COURSE,"Favourite byte",flag)
+
+
+
+from binascii import unhexlify
+
+# Step 1: Ciphertext from hex to bytes
+cipher_hex = "0e0b213f26041e480b26217f27342e175d0e070a3c5b103e2526217f27342e175d0e077e263451150104"
+cipher_bytes = unhexlify(cipher_hex)
+known_start = b"crypto{"
+partial_key = bytes([c ^ p for c, p in zip(cipher_bytes, known_start)])
+key = (partial_key * (len(cipher_bytes) // len(partial_key) + 1))[:len(cipher_bytes)]
+decoded = bytes([c ^ k for c, k in zip(cipher_bytes, key)])
+flag = decoded.decode()
+print_flag_for(COURSE,"You either know, XOR you don't",flag)
+
+COURSE = "MODULAR ARITHMETIC"
+def gcd(a, b):
+    while a != b: 
+        if a > b:
+            a = a - b
+        else:
+            b = b - a
+    return a
+flag = gcd(66528,52920)
+print_flag_for(COURSE,"Greatest Common Divisor",flag)
+
+
+
+def extended_gcd(a, b):
+    # Base case
+    if b == 0:
+        return (a, 1, 0)
+    else:
+        gcd, x1, y1 = extended_gcd(b, a % b)
+        x = y1
+        y = x1 - (a // b) * y1
+        return (gcd, x, y)
+
+p = 26513
+q = 32321
+gcd, u, v = extended_gcd(p, q)
+flag = min(u,v)
+print_flag_for(COURSE,"Extended GCD",flag)
+
+
+x = 11 % 6
+y = 8146798528947 % 17
+flag = min(x,y)
+print_flag_for(COURSE,"Modular Arithmetic 1",flag)
+#a^p−1 ≡ 1mod p => a−1 ≡ a^p−2 mod p
+
+def brute_force_mod_inverse(a, p):
+    for d in range(1, p):
+        if (a * d) % p == 1:
+            return d
+    return None  # No inverse exists if this point is reached
+
+# Example: Find 3⁻¹ mod 13
+a = 3
+p = 13
+inverse = brute_force_mod_inverse(a, p)
+flag = inverse
+print_flag_for(COURSE,"Modular Arithmetic 2",flag)
+
+def is_quadratic_residue(x, p):
+    # Try all a in range 1 to p-1
+    for a in range(1, p):
+        if (a * a) % p == x:
+            return a  # Return the square root (the smaller one)
+    return None
+
+p = 29
+ints = [14, 6, 11]
+root1,root2 = 0,0
+for x in ints:
+    root = is_quadratic_residue(x, p)
+    if root:
+        print(f"Found quadratic residue: {x}")
+        print(f"One square root of {x} mod {p} is: {root}")
+        root1 = root
+        root2 = (p-root) % p
+        print(f"The other root is: {(p - root) % p}")
+        break  
+print_flag_for(COURSE,"Quadratic Residues",flag)
+
+p = 101524035174539890485408575671085261788758965189060164484385690801466167356667036677932998889725476582421738788500738738503134356158197247473850273565349249573867251280253564698939768700489401960767007716413932851838937641880157263936985954881657889497583485535527613578457628399173971810541670838543309159139
+#
+ints = [25081841204695904475894082974192007718642931811040324543182130088804239047149283334700530600468528298920930150221871666297194395061462592781551275161695411167049544771049769000895119729307495913024360169904315078028798025169985966732789207320203861858234048872508633514498384390497048416012928086480326832803, 45471765180330439060504647480621449634904192839383897212809808339619841633826534856109999027962620381874878086991125854247108359699799913776917227058286090426484548349388138935504299609200377899052716663351188664096302672712078508601311725863678223874157861163196340391008634419348573975841578359355931590555, 17364140182001694956465593533200623738590196990236340894554145562517924989208719245429557645254953527658049246737589538280332010533027062477684237933221198639948938784244510469138826808187365678322547992099715229218615475923754896960363138890331502811292427146595752813297603265829581292183917027983351121325, 14388109104985808487337749876058284426747816961971581447380608277949200244660381570568531129775053684256071819837294436069133592772543582735985855506250660938574234958754211349215293281645205354069970790155237033436065434572020652955666855773232074749487007626050323967496732359278657193580493324467258802863, 4379499308310772821004090447650785095356643590411706358119239166662089428685562719233435615196994728767593223519226235062647670077854687031681041462632566890129595506430188602238753450337691441293042716909901692570971955078924699306873191983953501093343423248482960643055943413031768521782634679536276233318, 85256449776780591202928235662805033201684571648990042997557084658000067050672130152734911919581661523957075992761662315262685030115255938352540032297113615687815976039390537716707854569980516690246592112936796917504034711418465442893323439490171095447109457355598873230115172636184525449905022174536414781771, 50576597458517451578431293746926099486388286246142012476814190030935689430726042810458344828563913001012415702876199708216875020997112089693759638454900092580746638631062117961876611545851157613835724635005253792316142379239047654392970415343694657580353333217547079551304961116837545648785312490665576832987, 96868738830341112368094632337476840272563704408573054404213766500407517251810212494515862176356916912627172280446141202661640191237336568731069327906100896178776245311689857997012187599140875912026589672629935267844696976980890380730867520071059572350667913710344648377601017758188404474812654737363275994871, 4881261656846638800623549662943393234361061827128610120046315649707078244180313661063004390750821317096754282796876479695558644108492317407662131441224257537276274962372021273583478509416358764706098471849536036184924640593888902859441388472856822541452041181244337124767666161645827145408781917658423571721, 18237936726367556664171427575475596460727369368246286138804284742124256700367133250078608537129877968287885457417957868580553371999414227484737603688992620953200143688061024092623556471053006464123205133894607923801371986027458274343737860395496260538663183193877539815179246700525865152165600985105257601565]
+#
+#
+def legendre_symbol(a, p):
+    """Return 1 if a is a quadratic residue mod p, -1 otherwise."""
+    return pow(a, (p - 1) // 2, p)
+
+def sqrt_mod_p(a, p):
+    """Return the larger square root of a mod p (when p ≡ 3 mod 4)."""
+    r = pow(a, (p + 1) // 4, p)
+    return max(r, p - r)
+
+#Find the quadratic residue
+qr = None
+for a in ints:
+    if legendre_symbol(a, p) == 1:
+        qr = a
+        break
+flag = ""
+if qr is not None:
+    root = sqrt_mod_p(qr, p)
+    flag = f"crypto{{{root}}}"
+else:
+    print("No quadratic residue found.")
+print_flag_for(COURSE,"Legendre Symbol",flag)
+
+
+
+
