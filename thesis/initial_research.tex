@@ -1,0 +1,24 @@
+\documentclass[12pt,a4paper]{article}
+% Only essential packages
+\usepackage[utf8]{inputenc}  % Allow UTF-8 characters
+\usepackage{graphicx}        % For including figures
+\usepackage[backend=bibtex]{biblatex}
+\addbibresource{sources}
+\title{Initial report on volumetric video streaming techniques for payload reduction}
+\author{George Fakidis}
+\bibliography{sources}
+\date{\today}
+\begin{document}
+	
+\maketitle
+\paragraph{Questions}
+It seems that compression and payload reduction are generally discussed as one thing almost.
+
+\paragraph{Summary of Read Articles}
+In \cite{hosseini_dynamic_2018}, the authors extend the DASH protocol to support point cloud streaming, creating DASH-PC. It redefines the DASH manifest file format for point-cloud streaming. It also enables Level of Density(LoD) selection(representations) and view-aware fetching of sub-models(segments) from the client. They implemented an octree-based subsampling algorithm.
+
+In \cite{zerman_subjective_2019}, the authors evaluate the MPEG Point Cloud Compression Test Model Category 2(TMC2) in both an objective and subjective way. In the objective metrics they used PSNR(a weighted version for YUV channels) with different error terms(RMS,MSE,Hausdorff distance). For the subjective assessment they conducted experiments, they assessed large differences between images using a continuous scale between two images, and for smaller differences a simple choice between images of which one has the most point cloud points(compressed more or less aggressively).
+
+
+	
+\end{document}

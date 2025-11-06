@@ -1,0 +1,127 @@
+% $ biblatex auxiliary file $
+% $ biblatex bbl format version 3.3 $
+% Do not modify the above lines!
+%
+% This is an auxiliary file used by the 'biblatex' package.
+% This file may safely be deleted. It will be recreated as
+% required.
+%
+\begingroup
+\makeatletter
+\@ifundefined{ver@biblatex.sty}
+  {\@latex@error
+     {Missing 'biblatex' package}
+     {The bibliography requires the 'biblatex' package.}
+      \aftergroup\endinput}
+  {}
+\endgroup
+
+\datalist[entry]{nty/global//global/global/global}
+  \entry{hosseini_dynamic_2018}{inproceedings}{}{}
+    \name{author}{2}{}{%
+      {{hash=HM}{%
+         family={Hosseini},
+         familyi={H\bibinitperiod},
+         given={Mohammad},
+         giveni={M\bibinitperiod},
+      }}%
+      {{hash=TC}{%
+         family={Timmerer},
+         familyi={T\bibinitperiod},
+         given={Christian},
+         giveni={C\bibinitperiod},
+      }}%
+    }
+    \list{language}{1}{%
+      {en}%
+    }
+    \list{publisher}{1}{%
+      {ACM}%
+    }
+    \keyw{SEMI-READ}
+    \strng{namehash}{HMTC1}
+    \strng{fullhash}{HMTC1}
+    \field{labelnamesource}{author}
+    \field{labeltitlesource}{title}
+    \field{sortinit}{H}
+    \field{sortinithash}{H}
+    \field{booktitle}{Proceedings of the 23rd {Packet} {Video} {Workshop}}
+    \verb{doi}
+    \verb 10.1145/3210424.3210429
+    \endverb
+    \field{isbn}{978-1-4503-5773-9}
+    \field{pages}{25\bibrangedash 30}
+    \field{title}{Dynamic {Adaptive} {Point} {Cloud} {Streaming}}
+    \verb{url}
+    \verb https://dl.acm.org/doi/10.1145/3210424.3210429
+    \endverb
+    \list{location}{1}{%
+      {Amsterdam Netherlands}%
+    }
+    \verb{file}
+    \verb Available Version (via Google Scholar):/home/georgefkd/Zotero/storage
+    \verb /KVHPQCBN/Hosseini and Timmerer - 2018 - Dynamic Adaptive Point Cloud
+    \verb  Streaming.pdf:application/pdf
+    \endverb
+    \field{month}{06}
+    \field{year}{2018}
+    \field{urlday}{29}
+    \field{urlmonth}{09}
+    \field{urlyear}{2025}
+  \endentry
+
+  \entry{zerman_subjective_2019}{article}{}{}
+    \name{author}{4}{}{%
+      {{hash=ZE}{%
+         family={Zerman},
+         familyi={Z\bibinitperiod},
+         given={Emin},
+         giveni={E\bibinitperiod},
+      }}%
+      {{hash=GP}{%
+         family={Gao},
+         familyi={G\bibinitperiod},
+         given={Pan},
+         giveni={P\bibinitperiod},
+      }}%
+      {{hash=OC}{%
+         family={Ozcinar},
+         familyi={O\bibinitperiod},
+         given={Cagri},
+         giveni={C\bibinitperiod},
+      }}%
+      {{hash=SA}{%
+         family={Smolic},
+         familyi={S\bibinitperiod},
+         given={Aljosa},
+         giveni={A\bibinitperiod},
+      }}%
+    }
+    \keyw{SEMI-READ}
+    \strng{namehash}{ZE+1}
+    \strng{fullhash}{ZEGPOCSA1}
+    \field{labelnamesource}{author}
+    \field{labeltitlesource}{title}
+    \field{sortinit}{Z}
+    \field{sortinithash}{Z}
+    \field{note}{Publisher: Society for Imaging Science and Technology}
+    \field{pages}{1\bibrangedash 7}
+    \field{title}{Subjective and objective quality assessment for volumetric
+  video compression}
+    \verb{url}
+    \verb https://library.imaging.org/ei/articles/31/10/art00021
+    \endverb
+    \field{volume}{31}
+    \verb{file}
+    \verb Available Version (via Google Scholar):/home/georgefkd/Zotero/storage
+    \verb /D8RWLRSA/Zerman et al. - 2019 - Subjective and objective quality ass
+    \verb essment for volumetric video compression.pdf:application/pdf
+    \endverb
+    \field{journaltitle}{Electronic Imaging}
+    \field{year}{2019}
+    \field{urlday}{29}
+    \field{urlmonth}{09}
+    \field{urlyear}{2025}
+  \endentry
+\enddatalist
+\endinput

@@ -1,0 +1,11 @@
+\contentsline {paragraph}{Questions}{1}{}%
+\contentsline {chapter}{\numberline {1}Introduction}{3}{}%
+\contentsline {chapter}{\numberline {2}General Compression Techniques}{4}{}%
+\contentsline {section}{\numberline {2.1}Compression}{4}{}%
+\contentsline {chapter}{\numberline {3}Compression in Video/Image formats}{5}{}%
+\contentsline {section}{\numberline {3.1}adaptive compression}{5}{}%
+\contentsline {section}{\numberline {3.2}motion vectors}{5}{}%
+\contentsline {chapter}{\numberline {4}3D Video Encoding/Compression Techniques}{6}{}%
+\contentsline {section}{\numberline {4.1}Algorithms and Implementations}{6}{}%
+\contentsline {section}{\numberline {4.2}Latency Measurements}{6}{}%
+\contentsline {section}{\numberline {4.3}Applicability in ultra-low latency scenarios}{6}{}%
