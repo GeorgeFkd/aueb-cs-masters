@@ -1,5 +1,17 @@
 # aueb-cs-masters
 
+## Courses Completed:
+- Algorithms: Design and Analysis
+- Blockchain and Smart Contracts
+- Reinforcement Learning
+- Natural Language Processing
+- Research Methodology
+- Computer Game Graphics and Virtual Reality
+- Research in Computer Science 2
+- Social Networks: Theory and Practice
+- Cryptography and Applications
+- Convex Optimization
+
 ## Winter Semester 
 
 ### Natural Language Processing(NLP)
