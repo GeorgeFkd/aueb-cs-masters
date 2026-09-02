@@ -12,6 +12,21 @@
 - Cryptography and Applications
 - Convex Optimization
 
+## Papers written
+- [Multimedia latency measurements using GStreamer pipelines](./research-2/Research-2-GStreamer-Measurements-Final.pdf).
+  
+  Basically a way to measure end-to-end latency in GStreamer, with no extra hardware, using text-recognition technologies and a simple custom made app for this experiment. More can be read in the [README](./research-2/README.md) and for technical details to the codebase at [repo](https://github.com/GeorgeFkd/video-streaming-benchmarking-toolkit).
+- [Runtime Verification of performance deadlines using a temporal logic](./research-methodology/Runtime-Verification-Of-Performance-Temporal-Constraints.pdf).
+
+  This paper demonstrates a practical and theoretically rigorous way to test performance in event-based systems using metric temporal logic(MTL).
+- [Social Network Analysis of code review networks in FOSS projects](./social-networks/paper/foss-social-networks.pdf).
+
+  In this work, a simple social graph based analysis was done on popular web frontend frameworks(react,angular,vue) to analyze the robustness of their code review networks.
+
+- [My thesis titled: Privacy awareness in point clouds using AI-based object detection](https://www.pyxida.aueb.gr/files/821ac2b4-c778-4d10-87eb-a6f2613b48be/download/Fakidis_2026.pdf)
+
+  My thesis revolved around investigating techniques for enhancing privacy in point-clouds(3D video, popular in modern vehicles) and providing a proof-of-concept implementation of a media pipeline that anonymizes point-clouds.
+
 ## Winter Semester 
 
 ### Natural Language Processing(NLP)
